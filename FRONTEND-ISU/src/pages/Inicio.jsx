@@ -119,8 +119,9 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
         padding: "0 20px",
         height: "80px",
         position: "relative"
+        overflow: "hidden" 
       }}>
-        <img src={logo} alt="ISU" style={{ height: "60px" }} />
+        <img src={logo} alt="ISU" style={{ height: "60px", maxWidth: "150px", objectFit: "contain" }} />
 
         {/* MENÚ HAMBURGUESA (móvil) */}
         <button

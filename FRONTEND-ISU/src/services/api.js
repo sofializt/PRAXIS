@@ -1,4 +1,4 @@
-const API = "http://https://backend-isu.onrender.com/api";
+const API = "https://backend-isu.onrender.com/api";
 
 export const loginUsuario = async (datos) => {
   const res = await fetch(`${API}/login`, {

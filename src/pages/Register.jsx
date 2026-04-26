@@ -26,7 +26,7 @@ export default function Register({ rolInicial }) {
       id_rol: rolSeleccionado
     };
 
-    const res = await fetch("http://https://backend-isu.onrender.com/api/usuarios", {
+    const res = await fetch("https://backend-isu.onrender.com/api/usuarios", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

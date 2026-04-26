@@ -26,7 +26,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
     }
     setCargando(true);
     try {
-      const institucionRes = await fetch("http://https://backend-isu.onrender.com/api/instituciones", {
+      const institucionRes = await fetch("https://backend-isu.onrender.com/api/instituciones", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nombre_institucion: form.nombre_institucion,
@@ -37,7 +37,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
       const institucionData = await institucionRes.json();
       if (!institucionRes.ok || !institucionData.id_institucion) { alert("Error al crear la institución"); return; }
 
-      const usuarioRes = await fetch("http://https://backend-isu.onrender.com/api/usuarios", {
+      const usuarioRes = await fetch("https://backend-isu.onrender.com/api/usuarios", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nombre: form.nombre, apellido: form.apellido, correo: form.correo,

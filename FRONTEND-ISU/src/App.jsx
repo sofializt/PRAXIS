@@ -33,7 +33,7 @@ export default function App() {
     try {
       localStorage.clear(); // ← borra el anónimo anterior antes de crear uno nuevo
 
-      const res = await fetch("http://https://backend-isu.onrender.com/api/anonimo", {
+      const res = await fetch("https://backend-isu.onrender.com/api/anonimo", {
         method: "POST"
       });
       const data = await res.json();

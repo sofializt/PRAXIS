@@ -32,7 +32,7 @@ export default function PanelAdministrador() {
 
   const cargarEscenarios = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/escenarios");
+      const res = await fetch("http://https://backend-isu.onrender.com/api/escenarios");
       const data = await res.json();
       const formateados = data.map((item) => ({
         id: item.id_escenario,
@@ -55,7 +55,7 @@ export default function PanelAdministrador() {
 
   const cargarUsuarios = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/usuarios");
+      const res = await fetch("http://https://backend-isu.onrender.com/api/usuarios");
       const data = await res.json();
       setUsuarios(data);
     } catch (error) {
@@ -65,7 +65,7 @@ export default function PanelAdministrador() {
 
   const cargarRespuestas = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/respuestas");
+      const res = await fetch("http://https://backend-isu.onrender.com/api/respuestas");
       const data = await res.json();
       setRespuestas(data);
     } catch (error) {
@@ -90,8 +90,8 @@ export default function PanelAdministrador() {
       if (imagen2) formData.append("imagen2", imagen2);
 
       const url = modoEdicion
-        ? `http://localhost:4000/api/escenarios/${idEscenarioEditando}`
-        : "http://localhost:4000/api/escenarios";
+        ? `http://https://backend-isu.onrender.com/api/escenarios/${idEscenarioEditando}`
+        : "http://https://backend-isu.onrender.com/api/escenarios";
 
       const method = modoEdicion ? "PUT" : "POST";
 
@@ -122,7 +122,7 @@ export default function PanelAdministrador() {
     setIdEscenarioEditando(item.id);
 
     try {
-      const res = await fetch(`http://localhost:4000/api/opciones/${item.id}`);
+      const res = await fetch(`http://https://backend-isu.onrender.com/api/opciones/${item.id}`);
       const opciones = await res.json();
       setNuevoEscenario({
         titulo: item.titulo,
@@ -154,7 +154,7 @@ export default function PanelAdministrador() {
     if (!confirmar) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/api/escenarios/${id}`, { method: "DELETE" });
+      const res = await fetch(`http://https://backend-isu.onrender.com/api/escenarios/${id}`, { method: "DELETE" });
       const data = await res.json();
 
       if (!res.ok) {

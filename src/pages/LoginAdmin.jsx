@@ -16,7 +16,7 @@ export default function LoginAdmin({ onLogin }) {
     setCargando(true);
 
     try {
-      const res = await fetch("http://localhost:4000/api/admin/login", {
+      const res = await fetch("http://https://backend-isu.onrender.com/api/admin/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

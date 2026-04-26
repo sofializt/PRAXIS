@@ -42,7 +42,7 @@ export default function Escenarios({ onCerrarSesion }) {
 
   const cargarEscenarios = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/escenarios");
+      const res = await fetch("http://https://backend-isu.onrender.com/api/escenarios");
       const data = await res.json();
       setEscenarios(data);
     } catch (error) {
@@ -52,7 +52,7 @@ export default function Escenarios({ onCerrarSesion }) {
 
   const cargarOpciones = async (idEscenario) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/opciones/${idEscenario}`);
+      const res = await fetch(`http://https://backend-isu.onrender.com/api/opciones/${idEscenario}`);
       const data = await res.json();
       setOpciones(data);
     } catch (error) {
@@ -62,7 +62,7 @@ export default function Escenarios({ onCerrarSesion }) {
 
   const cargarMisRespuestas = async (id) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/respuestas/usuario/${id}`);
+      const res = await fetch(`http://https://backend-isu.onrender.com/api/respuestas/usuario/${id}`);
       const data = await res.json();
       setMisRespuestas(data);
     } catch (error) {
@@ -108,7 +108,7 @@ export default function Escenarios({ onCerrarSesion }) {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/api/respuestas", {
+      const res = await fetch("http://https://backend-isu.onrender.com/api/respuestas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -329,7 +329,7 @@ export default function Escenarios({ onCerrarSesion }) {
                   }}
                 >
                   <img
-                    src={`http://localhost:4000/uploads/${opcion.imagen}`}
+                    src={`http://https://backend-isu.onrender.com/uploads/${opcion.imagen}`}
                     alt=""
                     style={{ width: "100%", height: "230px", objectFit: "cover" }}
                   />

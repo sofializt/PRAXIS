@@ -8,11 +8,9 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
   const [animar, setAnimar] = useState(true);
   const [animandoProfesor, setAnimandoProfesor] = useState(false);
   const [animandoAnonimo, setAnimandoAnonimo] = useState(false);
-  const [menuAbierto, setMenuAbierto] = useState(false);
 
   const manejarClickMenu = (key) => {
     setAnimar(false);
-    setMenuAbierto(false);
     setTimeout(() => {
       if (key === "juzga") { handleAnonimo(); return; }
       if (key === "proponer") {
@@ -46,16 +44,22 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
       {/* OVERLAY PROFESOR */}
       {animandoProfesor && (
         <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: "#F0FBF5", zIndex: 9999,
-          display: "flex", alignItems: "center", justifyContent: "center",
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "#F0FBF5",
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           pointerEvents: "none"
         }}>
-          <svg width="300" height="200" viewBox="0 0 500 200">
+          <svg width="500" height="200" viewBox="0 0 500 200">
             <line x1="0" y1="170" x2="500" y2="170" stroke="#007B3E" strokeWidth="3"/>
             <g>
-              <rect x="390" y="90" width="60" height="80" rx="4" fill="#DFF5EA" stroke="#007B3E" strokeWidth="2.5"/>
-              <rect x="385" y="86" width="70" height="84" rx="5" fill="none" stroke="#00482B" strokeWidth="3"/>
+              <rect x="390" y="90" width="60" height="80" rx="4"
+                fill="#DFF5EA" stroke="#007B3E" strokeWidth="2.5"/>
+              <rect x="385" y="86" width="70" height="84" rx="5"
+                fill="none" stroke="#00482B" strokeWidth="3"/>
               <circle cx="398" cy="132" r="4" fill="#007B3E"/>
               <line x1="420" y1="90" x2="420" y2="170" stroke="#007B3E" strokeWidth="1.5" strokeDasharray="4 3"/>
             </g>
@@ -68,12 +72,27 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
               <path d="M -4 113 Q 0 117 4 113" stroke="#333" strokeWidth="1.5" fill="none"/>
               <rect x="-13" y="94" width="26" height="8" rx="4" fill="#4A2C0A"/>
               <polygon points="0,134 -4,148 0,145 4,148" fill="#FFD700"/>
-              <line x1="-10" y1="128" x2="-22" y2="145" stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round" style={{ animation: "brazoIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-10px 128px" }}/>
-              <line x1="10" y1="128" x2="22" y2="145" stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round" style={{ animation: "brazoDer 0.4s ease-in-out infinite alternate", transformOrigin: "10px 128px" }}/>
-              <line x1="-5" y1="148" x2="-10" y2="170" stroke="#00482B" strokeWidth="6" strokeLinecap="round" style={{ animation: "piernaIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-5px 148px" }}/>
-              <line x1="5" y1="148" x2="10" y2="170" stroke="#00482B" strokeWidth="6" strokeLinecap="round" style={{ animation: "piernaDer 0.4s ease-in-out infinite alternate", transformOrigin: "5px 148px" }}/>
+              <line x1="-10" y1="128" x2="-22" y2="145"
+                stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round"
+                style={{ animation: "brazoIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-10px 128px" }}/>
+              <line x1="10" y1="128" x2="22" y2="145"
+                stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round"
+                style={{ animation: "brazoDer 0.4s ease-in-out infinite alternate", transformOrigin: "10px 128px" }}/>
+              <line x1="-5" y1="148" x2="-10" y2="170"
+                stroke="#00482B" strokeWidth="6" strokeLinecap="round"
+                style={{ animation: "piernaIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-5px 148px" }}/>
+              <line x1="5" y1="148" x2="10" y2="170"
+                stroke="#00482B" strokeWidth="6" strokeLinecap="round"
+                style={{ animation: "piernaDer 0.4s ease-in-out infinite alternate", transformOrigin: "5px 148px" }}/>
+              <rect x="18" y="132" width="16" height="12" rx="3" fill="#8B6914" stroke="#5C4A1E" strokeWidth="1.5"/>
+              <path d="M 22 132 Q 22 128 26 128 Q 30 128 30 132" stroke="#5C4A1E" strokeWidth="1.5" fill="none"/>
             </g>
-            <text x="250" y="40" textAnchor="middle" fontFamily="Montserrat, sans-serif" fontSize="18" fontWeight="700" fill="#00482B">¡Bienvenido, Profesor!</text>
+            <text x="250" y="40" textAnchor="middle"
+              fontFamily="Montserrat, sans-serif"
+              fontSize="18" fontWeight="700" fill="#00482B"
+              style={{ animation: "fadeInText 0.5s ease forwards" }}>
+              ¡Bienvenido, Profesor!
+            </text>
           </svg>
         </div>
       )}
@@ -81,21 +100,44 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
       {/* OVERLAY ANÓNIMO */}
       {animandoAnonimo && (
         <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: "#F0FBF5", zIndex: 9999,
-          display: "flex", alignItems: "center", justifyContent: "center",
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "#F0FBF5",
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           pointerEvents: "none"
         }}>
-          <svg width="300" height="200" viewBox="0 0 500 200">
+          <svg width="500" height="200" viewBox="0 0 500 200">
             <line x1="0" y1="170" x2="500" y2="170" stroke="#007B3E" strokeWidth="3"/>
+            <g>
+              <rect x="370" y="80" width="90" height="65" rx="6"
+                fill="#DFF5EA" stroke="#007B3E" strokeWidth="2.5"/>
+              <line x1="380" y1="97" x2="450" y2="97" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="380" y1="108" x2="445" y2="108" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="380" y1="119" x2="440" y2="119" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
+              <rect x="408" y="145" width="6" height="12" rx="2" fill="#007B3E"/>
+              <rect x="398" y="157" width="26" height="4" rx="2" fill="#007B3E"/>
+              <text x="460" y="122" fontFamily="Montserrat,sans-serif"
+                fontSize="28" fontWeight="700" fill="#FFD700">?</text>
+            </g>
             <g style={{ animation: "caminar 1.8s ease-in-out forwards" }}>
               <ellipse cx="0" cy="172" rx="18" ry="5" fill="rgba(0,0,0,0.12)"/>
-              <line x1="-5" y1="148" x2="-10" y2="170" stroke="#00482B" strokeWidth="6" strokeLinecap="round" style={{ animation: "piernaIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-5px 148px" }}/>
-              <line x1="5" y1="148" x2="10" y2="170" stroke="#00482B" strokeWidth="6" strokeLinecap="round" style={{ animation: "piernaDer 0.4s ease-in-out infinite alternate", transformOrigin: "5px 148px" }}/>
+              <line x1="-5" y1="148" x2="-10" y2="170"
+                stroke="#00482B" strokeWidth="6" strokeLinecap="round"
+                style={{ animation: "piernaIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-5px 148px" }}/>
+              <line x1="5" y1="148" x2="10" y2="170"
+                stroke="#00482B" strokeWidth="6" strokeLinecap="round"
+                style={{ animation: "piernaDer 0.4s ease-in-out infinite alternate", transformOrigin: "5px 148px" }}/>
               <rect x="-10" y="120" width="20" height="28" rx="4" fill="#007B3E"/>
               <polygon points="0,124 -3,138 0,135 3,138" fill="#FFD700"/>
-              <line x1="-10" y1="128" x2="-22" y2="145" stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round" style={{ animation: "brazoIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-10px 128px" }}/>
-              <line x1="10" y1="128" x2="22" y2="145" stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round" style={{ animation: "brazoDer 0.4s ease-in-out infinite alternate", transformOrigin: "10px 128px" }}/>
+              <line x1="-10" y1="128" x2="-22" y2="145"
+                stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round"
+                style={{ animation: "brazoIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-10px 128px" }}/>
+              <line x1="10" y1="128" x2="22" y2="145"
+                stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round"
+                style={{ animation: "brazoDer 0.4s ease-in-out infinite alternate", transformOrigin: "10px 128px" }}/>
               <rect x="-4" y="108" width="8" height="13" rx="3" fill="#F5CBA7"/>
               <circle cx="0" cy="96" r="14" fill="#F5CBA7"/>
               <rect x="-12" y="90" width="24" height="9" rx="4" fill="#00482B" opacity="0.85"/>
@@ -103,9 +145,19 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
               <circle cx="5" cy="94" r="2.5" fill="white"/>
               <path d="M -4 103 Q 0 107 4 103" stroke="#333" strokeWidth="1.5" fill="none"/>
               <rect x="-13" y="82" width="26" height="8" rx="4" fill="#4A2C0A"/>
-              <text x="0" y="76" textAnchor="middle" fontFamily="Montserrat,sans-serif" fontSize="16" fontWeight="700" fill="#FFD700" style={{ animation: "flotarInterrogacion 0.6s ease-in-out infinite alternate" }}>?</text>
+              <text x="0" y="76" textAnchor="middle"
+                fontFamily="Montserrat,sans-serif"
+                fontSize="16" fontWeight="700" fill="#FFD700"
+                style={{ animation: "flotarInterrogacion 0.6s ease-in-out infinite alternate" }}>
+                ?
+              </text>
             </g>
-            <text x="250" y="40" textAnchor="middle" fontFamily="Montserrat, sans-serif" fontSize="18" fontWeight="700" fill="#00482B">¡Comienza el juicio!</text>
+            <text x="250" y="40" textAnchor="middle"
+              fontFamily="Montserrat, sans-serif"
+              fontSize="18" fontWeight="700" fill="#00482B"
+              style={{ animation: "fadeInText 0.5s ease forwards" }}>
+              ¡Comienza el juicio!
+            </text>
           </svg>
         </div>
       )}
@@ -116,38 +168,24 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 20px",
-        height: "80px",
-        position: "relative"
+        padding: "0 130px",
+        height: "140px",
       }}>
-        <img src={logo} alt="ISU" style={{ height: "60px", maxWidth: "150px", objectFit: "contain" }} />
+        <img src={logo} alt="ISU" style={{ height: "100px" }} />
 
-        <button
-          onClick={() => setMenuAbierto(!menuAbierto)}
-          className="hamburger"
-          style={{
-            background: "none", border: "none",
-            color: "white", fontSize: "28px",
-            cursor: "pointer", display: "none"
-          }}
-        >
-          ☰
-        </button>
-
-        <div className="nav-links" style={{
-          display: "flex", alignItems: "center", gap: "40px"
-        }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "130px" }}>
           {[
             { label: "Inicio", key: "inicio" },
             { label: "¿Qué hacemos?", key: "que" },
             { label: "Juzga", key: "juzga" },
-            { label: "Proponer escenario", key: "proponer" },
           ].map(({ label, key }) => (
             <span
               key={key}
               onClick={() => manejarClickMenu(key)}
               style={{
-                color: "white", fontWeight: "600", fontSize: "16px",
+                color: "white",
+                fontWeight: "600",
+                fontSize: "20px",
                 cursor: "pointer",
                 borderBottom: menuActivo === key ? "2px solid white" : "2px solid transparent",
               }}
@@ -156,75 +194,52 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
             </span>
           ))}
 
-          <button
-            onClick={handleSoyProfesor}
-            disabled={animandoProfesor}
+          <span
+            onClick={() => manejarClickMenu("proponer")}
             style={{
-              backgroundColor: "white", color: "#00482B",
-              border: "none", borderRadius: "30px",
-              padding: "10px 22px", fontWeight: "700",
-              fontSize: "14px", cursor: "pointer",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+              color: "white", fontWeight: "600",
+              fontSize: "20px", cursor: "pointer", textAlign: "center",
             }}
           >
-            SOY PROFESOR
-          </button>
+            Proponer<br />escenario
+          </span>
         </div>
 
-        {menuAbierto && (
-          <div style={{
-            position: "absolute", top: "80px", left: 0, right: 0,
-            backgroundColor: "#007B3E", zIndex: 1000,
-            display: "flex", flexDirection: "column",
-            padding: "20px", gap: "16px"
-          }}>
-            {[
-              { label: "Inicio", key: "inicio" },
-              { label: "¿Qué hacemos?", key: "que" },
-              { label: "Juzga", key: "juzga" },
-              { label: "Proponer escenario", key: "proponer" },
-            ].map(({ label, key }) => (
-              <span
-                key={key}
-                onClick={() => manejarClickMenu(key)}
-                style={{
-                  color: "white", fontWeight: "600", fontSize: "18px",
-                  cursor: "pointer", padding: "8px 0",
-                  borderBottom: "1px solid rgba(255,255,255,0.2)"
-                }}
-              >
-                {label}
-              </span>
-            ))}
-            <button
-              onClick={handleSoyProfesor}
-              style={{
-                backgroundColor: "white", color: "#00482B",
-                border: "none", borderRadius: "30px",
-                padding: "12px", fontWeight: "700",
-                fontSize: "16px", cursor: "pointer", marginTop: "8px"
-              }}
-            >
-              SOY PROFESOR
-            </button>
-          </div>
-        )}
+        <button
+          onClick={handleSoyProfesor}
+          disabled={animandoProfesor}
+          style={{
+            backgroundColor: "white",
+            color: "#00482B",
+            border: "none",
+            borderRadius: "30px",
+            padding: "14px 30px",
+            fontWeight: "700",
+            fontSize: "16px",
+            cursor: animandoProfesor ? "default" : "pointer",
+            transition: "all 0.3s",
+            transform: animandoProfesor ? "scale(0.95)" : "scale(1)",
+            boxShadow: animandoProfesor ? "none" : "0 4px 12px rgba(0,0,0,0.2)"
+          }}
+        >
+          SOY<br />PROFESOR
+        </button>
       </nav>
 
       {/* CONTENIDO */}
       <div style={{
-        paddingTop: "40px",
+        paddingTop: "50px",
         opacity: animar ? 1 : 0,
         transform: animar ? "translateY(0)" : "translateY(20px)",
         transition: "all 0.4s ease",
       }}>
         {menuActivo === "inicio" && (
-          <div style={{ width: "90%", maxWidth: "600px", margin: "0 auto" }}>
+          <div style={{ width: "600px", margin: "0 auto" }}>
 
             {/* ✅ VIDEO YOUTUBE */}
             <iframe
               width="100%"
-              height="250px"
+              height="350px"
               src="https://www.youtube.com/embed/A69N6L35nVQ"
               title="Video"
               frameBorder="0"
@@ -241,8 +256,11 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
                   border: "none", borderRadius: "40px",
                   padding: "15px 40px", fontSize: "18px",
                   fontWeight: "700", cursor: "pointer",
+                  transition: "all 0.3s ease",
                   boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
                 }}
+                onMouseEnter={(e) => e.target.style.transform = "scale(1.07)"}
+                onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
               >
                 COMIENZA EL JUICIO
               </button>
@@ -251,7 +269,7 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
         )}
 
         {menuActivo === "que" && (
-          <div style={{ maxWidth: "900px", margin: "0 auto", padding: "20px" }}>
+          <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "20px 40px" }}>
             <h1 style={{ color: "#007B3E" }}>¿Qué hacemos?</h1>
             <p style={{ lineHeight: "1.8", marginTop: "20px" }}>
               Este proyecto busca concientizar a los docentes sobre los usos,
@@ -260,8 +278,7 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
             </p>
 
             <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
               gap: "20px", marginTop: "40px",
             }}>
               {[
@@ -269,17 +286,28 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
                 { titulo: "Toma de decisiones", texto: "El docente analiza y decide." },
                 { titulo: "Reflexión crítica", texto: "Evaluación ética y pedagógica." },
               ].map((card, i) => (
-                <div key={i} style={{
-                  backgroundColor: "#F5F5F5", padding: "20px",
-                  borderRadius: "15px", textAlign: "center",
-                }}>
+                <div key={i}
+                  style={{
+                    backgroundColor: "#F5F5F5", padding: "20px",
+                    borderRadius: "15px", textAlign: "center",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-8px)";
+                    e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
                   <h3 style={{ color: "#00482B" }}>{card.titulo}</h3>
                   <p style={{ fontSize: "14px" }}>{card.texto}</p>
                 </div>
               ))}
             </div>
 
-            <h2 style={{ color: "#00482B", marginTop: "40px" }}>Problemática</h2>
+            <h2 style={{ color: "#00482B", marginTop: "50px" }}>Problemática</h2>
             <p style={{ lineHeight: "1.8" }}>
               La rápida expansión de la inteligencia artificial ha superado la capacidad
               de adaptación pedagógica, generando una brecha entre su uso y la formación docente.
@@ -291,7 +319,7 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
               basada en escenarios educativos.
             </p>
 
-            <div style={{ textAlign: "center", marginTop: "40px" }}>
+            <div style={{ textAlign: "center", marginTop: "50px" }}>
               <h3 style={{ color: "#00482B" }}>Conoce los programas académicos</h3>
               <img src={qr} alt="QR" style={{ width: "150px" }} />
               <p style={{ fontSize: "14px" }}>Escanea el código para más información.</p>
@@ -299,45 +327,56 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
           </div>
         )}
 
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-          <img src={LogoUdec} alt="UDEC" style={{ width: "180px" }} />
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "5px" }}>
+          <img src={LogoUdec} alt="UDEC" style={{ width: "250px" }} />
         </div>
       </div>
 
       {/* FOOTER */}
-      <footer style={{ backgroundColor: "#00482B", color: "white", padding: "30px 20px", marginTop: "40px" }}>
-        <div style={{
-          display: "flex", flexWrap: "wrap",
-          justifyContent: "space-between", alignItems: "center", gap: "20px"
-        }}>
+      <footer style={{ backgroundColor: "#00482B", color: "white", padding: "30px 130px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <div>
-            <h3 style={{ margin: "0 0 6px 0" }}>Praxis</h3>
-            <p style={{ fontSize: "14px", margin: 0 }}>Plataforma educativa con IA</p>
+            <h3>Praxis</h3>
+            <p style={{ fontSize: "14px" }}>Plataforma educativa con IA</p>
           </div>
-          <img src={LogoUdec} alt="UDEC" style={{ width: "150px" }} />
+          <img src={LogoUdec} alt="UDEC" style={{ width: "250px" }} />
           <div style={{ textAlign: "right", fontSize: "14px" }}>
-            <p style={{ margin: "0 0 4px 0" }}>© 2026</p>
-            <p style={{ margin: 0 }}>Universidad de Cundinamarca</p>
+            <p>© 2026</p>
+            <p>Universidad de Cundinamarca</p>
           </div>
         </div>
       </footer>
 
       <style>{`
-        @media (max-width: 768px) {
-          .nav-links { display: none !important; }
-          .hamburger { display: block !important; }
-        }
         @keyframes caminar {
           0%   { transform: translateX(60px); }
           85%  { transform: translateX(370px); opacity: 1; }
           100% { transform: translateX(380px); opacity: 0; }
         }
-        @keyframes brazoIzq { from { transform: rotate(-25deg); } to { transform: rotate(25deg); } }
-        @keyframes brazoDer { from { transform: rotate(25deg); } to { transform: rotate(-25deg); } }
-        @keyframes piernaIzq { from { transform: rotate(-20deg); } to { transform: rotate(20deg); } }
-        @keyframes piernaDer { from { transform: rotate(20deg); } to { transform: rotate(-20deg); } }
-        @keyframes fadeInText { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes flotarInterrogacion { from { transform: translateY(0px); } to { transform: translateY(-5px); } }
+        @keyframes brazoIzq {
+          from { transform: rotate(-25deg); }
+          to   { transform: rotate(25deg); }
+        }
+        @keyframes brazoDer {
+          from { transform: rotate(25deg); }
+          to   { transform: rotate(-25deg); }
+        }
+        @keyframes piernaIzq {
+          from { transform: rotate(-20deg); }
+          to   { transform: rotate(20deg); }
+        }
+        @keyframes piernaDer {
+          from { transform: rotate(20deg); }
+          to   { transform: rotate(-20deg); }
+        }
+        @keyframes fadeInText {
+          from { opacity: 0; transform: translateY(-10px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes flotarInterrogacion {
+          from { transform: translateY(0px); }
+          to   { transform: translateY(-5px); }
+        }
       `}</style>
     </div>
   );

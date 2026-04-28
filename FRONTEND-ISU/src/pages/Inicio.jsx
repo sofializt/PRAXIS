@@ -122,7 +122,6 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
       }}>
         <img src={logo} alt="ISU" style={{ height: "60px", maxWidth: "150px", objectFit: "contain" }} />
 
-        {/* MENÚ HAMBURGUESA (móvil) */}
         <button
           onClick={() => setMenuAbierto(!menuAbierto)}
           className="hamburger"
@@ -135,7 +134,6 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
           ☰
         </button>
 
-        {/* LINKS DESKTOP */}
         <div className="nav-links" style={{
           display: "flex", alignItems: "center", gap: "40px"
         }}>
@@ -173,7 +171,6 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
           </button>
         </div>
 
-        {/* MENÚ MÓVIL DESPLEGABLE */}
         {menuAbierto && (
           <div style={{
             position: "absolute", top: "80px", left: 0, right: 0,
@@ -223,7 +220,8 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
       }}>
         {menuActivo === "inicio" && (
           <div style={{ width: "90%", maxWidth: "600px", margin: "0 auto" }}>
-            {/* VIDEO YOUTUBE */}
+
+            {/* ✅ VIDEO YOUTUBE */}
             <iframe
               width="100%"
               height="250px"
@@ -234,6 +232,7 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
               allowFullScreen
               style={{ borderRadius: "10px" }}
             />
+
             <div style={{ display: "flex", justifyContent: "center", marginTop: "30px" }}>
               <button
                 onClick={handleAnonimo}

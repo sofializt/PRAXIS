@@ -175,7 +175,12 @@ export default function Escenarios({ onCerrarSesion }) {
         padding: "0 130px",
         height: "140px"
       }}>
-        <img src={logo} alt="ISU" style={{ height: "120px" }} />
+        <img
+         src={logo}
+         alt="ISU"
+         style={{ height: "120px", cursor: "pointer" }}
+         onClick={cerrarSesion}
+        />
 
         <button
           onClick={cerrarSesion}

@@ -168,12 +168,17 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 130px",
-        height: "140px",
+        padding: "0 60px",
+        height: "100px",
       }}>
-        <img src={logo} alt="ISU" style={{ height: "100px" }} />
+        <img
+          src={logo}
+          alt="ISU"
+          style={{ height: "70px", cursor: "pointer" }}
+          onClick={() => manejarClickMenu("inicio")}
+        />
 
-        <div style={{ display: "flex", alignItems: "center", gap: "130px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
           {[
             { label: "Inicio", key: "inicio" },
             { label: "¿Qué hacemos?", key: "que" },
@@ -185,7 +190,7 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
               style={{
                 color: "white",
                 fontWeight: "600",
-                fontSize: "20px",
+                fontSize: "16px",
                 cursor: "pointer",
                 borderBottom: menuActivo === key ? "2px solid white" : "2px solid transparent",
               }}
@@ -198,10 +203,10 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
             onClick={() => manejarClickMenu("proponer")}
             style={{
               color: "white", fontWeight: "600",
-              fontSize: "20px", cursor: "pointer", textAlign: "center",
+              fontSize: "16px", cursor: "pointer",
             }}
           >
-            Proponer<br />escenario
+            Proponer escenario
           </span>
         </div>
 
@@ -213,16 +218,16 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
             color: "#00482B",
             border: "none",
             borderRadius: "30px",
-            padding: "14px 30px",
+            padding: "12px 28px",
             fontWeight: "700",
-            fontSize: "16px",
+            fontSize: "15px",
             cursor: animandoProfesor ? "default" : "pointer",
             transition: "all 0.3s",
             transform: animandoProfesor ? "scale(0.95)" : "scale(1)",
             boxShadow: animandoProfesor ? "none" : "0 4px 12px rgba(0,0,0,0.2)"
           }}
         >
-          SOY<br />PROFESOR
+          SOY PROFESOR
         </button>
       </nav>
 
@@ -236,7 +241,7 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
         {menuActivo === "inicio" && (
           <div style={{ width: "600px", margin: "0 auto" }}>
 
-            {/* ✅ VIDEO YOUTUBE */}
+            {/* VIDEO YOUTUBE */}
             <iframe
               width="100%"
               height="350px"

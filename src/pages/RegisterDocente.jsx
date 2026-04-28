@@ -63,7 +63,12 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
         alignItems: "center", justifyContent: "center", padding: "60px 50px",
         animation: "slideInLeft 0.6s ease forwards"
       }}>
-        <img src={logo} alt="Praxis" style={{ width: "200px", marginBottom: "30px" }} />
+        <img
+         src={logo}
+         alt="Praxis"
+         style={{ width: "200px", marginBottom: "30px", cursor: "pointer" }}
+         onClick={() => window.location.href = "/"}
+        />
 
         {/* MUÑEQUITO CON ANIMACIÓN CONDICIONAL */}
         <div style={{ position: "relative", marginBottom: "20px" }}>

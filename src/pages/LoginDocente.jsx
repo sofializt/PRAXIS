@@ -82,7 +82,12 @@ export default function LoginDocente({ onLogin, onAnonimo }) {
         padding: "60px 50px",
         animation: "slideInLeft 0.6s ease forwards"
       }}>
-        <img src={logo} alt="Praxis" style={{ width: "200px", marginBottom: "50px" }} />
+        <img
+         src={logo}
+         alt="Praxis"
+         style={{ width: "200px", marginBottom: "50px", cursor: "pointer" }}
+         onClick={() => window.location.href = "/"}
+        />
 
         <svg width="120" height="160" viewBox="0 0 120 160" style={{ marginBottom: "30px" }}>
           <ellipse cx="60" cy="155" rx="25" ry="6" fill="rgba(0,0,0,0.2)"/>

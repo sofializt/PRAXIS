@@ -15,38 +15,50 @@ export default function App() {
 
   const [pantalla, setPantalla] = useState("inicio");
 
-  // ✅ URL secreta para admin
+  // URL secreta para admin
   if (window.location.pathname === "/admin") {
     if (usuario?.id_rol === 2) return <PanelAdministrador usuario={usuario} />;
     return <LoginAdmin onLogin={setUsuario} />;
   }
 
-  // ✅ Cerrar sesión — limpia TODO antes de resetear el estado
   const cerrarSesion = () => {
-    localStorage.clear();  // ← primero limpia
-    setUsuario(null);      // ← luego resetea React
+    localStorage.clear();
+    setUsuario(null);
     setPantalla("inicio");
   };
 
-  // ✅ Crear anónimo — limpia sesión anterior antes de crear uno nuevo
   const crearAnonimo = async () => {
-    try {
-      localStorage.clear(); // ← borra el anónimo anterior antes de crear uno nuevo
+    localStorage.clear();
 
-      const res = await fetch("https://backend-isu.onrender.com/api/anonimo", {
-        method: "POST"
-      });
-      const data = await res.json();
+    // Intentar hasta 3 veces
+    for (let intento = 1; intento <= 3; intento++) {
+      try {
+        const res = await fetch("https://backend-isu.onrender.com/api/anonimo", {
+          method: "POST",
+          signal: AbortSignal.timeout(8000) // 8 segundos máximo por intento
+        });
+        const data = await res.json();
 
-      if (data.usuario) {
-        localStorage.setItem("usuario", JSON.stringify(data.usuario));
-        localStorage.setItem("id_usuario", data.usuario.id_usuario);
-        localStorage.setItem("id_rol", data.usuario.id_rol);
-        setUsuario(data.usuario);
+        if (data.usuario) {
+          localStorage.setItem("usuario", JSON.stringify(data.usuario));
+          localStorage.setItem("id_usuario", data.usuario.id_usuario);
+          localStorage.setItem("id_rol", data.usuario.id_rol);
+          setUsuario(data.usuario);
+          return; // éxito, salir
+        }
+      } catch (error) {
+        console.warn(`Intento ${intento} fallido:`, error);
+        if (intento < 3) {
+          await new Promise(r => setTimeout(r, 1500)); // esperar 1.5s antes de reintentar
+        }
       }
-    } catch (error) {
-      console.error("Error creando anónimo:", error);
     }
+
+    // Si falló todo, crear anónimo local sin BD
+    console.warn("Backend no disponible, usando anónimo local");
+    const anomimo = { id_usuario: null, id_rol: 4, nombre: "Anónimo" };
+    localStorage.setItem("usuario", JSON.stringify(anomimo));
+    setUsuario(anomimo);
   };
 
   // Si ya hay sesión activa

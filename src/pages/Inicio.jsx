@@ -110,89 +110,54 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
           pointerEvents: "none"
         }}>
           <svg width="500" height="200" viewBox="0 0 500 200">
-
-            {/* PISO */}
             <line x1="0" y1="170" x2="500" y2="170" stroke="#007B3E" strokeWidth="3"/>
-
-            {/* PANTALLA / ESCENARIO al fondo */}
             <g>
               <rect x="370" y="80" width="90" height="65" rx="6"
                 fill="#DFF5EA" stroke="#007B3E" strokeWidth="2.5"/>
-              {/* líneas simulando texto */}
               <line x1="380" y1="97" x2="450" y2="97" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
               <line x1="380" y1="108" x2="445" y2="108" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
               <line x1="380" y1="119" x2="440" y2="119" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
-              {/* pie de pantalla */}
               <rect x="408" y="145" width="6" height="12" rx="2" fill="#007B3E"/>
               <rect x="398" y="157" width="26" height="4" rx="2" fill="#007B3E"/>
-              {/* signo de interrogación */}
               <text x="460" y="122" fontFamily="Montserrat,sans-serif"
                 fontSize="28" fontWeight="700" fill="#FFD700">?</text>
             </g>
-
-            {/* MUÑEQUITO ANÓNIMO — sin maletín, con signo ? en la cabeza */}
             <g style={{ animation: "caminar 1.8s ease-in-out forwards" }}>
-
-              {/* sombra */}
               <ellipse cx="0" cy="172" rx="18" ry="5" fill="rgba(0,0,0,0.12)"/>
-
-              {/* piernas */}
               <line x1="-5" y1="148" x2="-10" y2="170"
                 stroke="#00482B" strokeWidth="6" strokeLinecap="round"
                 style={{ animation: "piernaIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-5px 148px" }}/>
               <line x1="5" y1="148" x2="10" y2="170"
                 stroke="#00482B" strokeWidth="6" strokeLinecap="round"
                 style={{ animation: "piernaDer 0.4s ease-in-out infinite alternate", transformOrigin: "5px 148px" }}/>
-
-              {/* cuerpo */}
               <rect x="-10" y="120" width="20" height="28" rx="4" fill="#007B3E"/>
-
-              {/* corbata */}
               <polygon points="0,124 -3,138 0,135 3,138" fill="#FFD700"/>
-
-              {/* brazos */}
               <line x1="-10" y1="128" x2="-22" y2="145"
                 stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round"
                 style={{ animation: "brazoIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-10px 128px" }}/>
               <line x1="10" y1="128" x2="22" y2="145"
                 stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round"
                 style={{ animation: "brazoDer 0.4s ease-in-out infinite alternate", transformOrigin: "10px 128px" }}/>
-
-              {/* cuello */}
               <rect x="-4" y="108" width="8" height="13" rx="3" fill="#F5CBA7"/>
-
-              {/* cabeza */}
               <circle cx="0" cy="96" r="14" fill="#F5CBA7"/>
-
-              {/* máscara anónima — ojos tapados */}
               <rect x="-12" y="90" width="24" height="9" rx="4" fill="#00482B" opacity="0.85"/>
               <circle cx="-5" cy="94" r="2.5" fill="white"/>
               <circle cx="5" cy="94" r="2.5" fill="white"/>
-
-              {/* boca */}
               <path d="M -4 103 Q 0 107 4 103" stroke="#333" strokeWidth="1.5" fill="none"/>
-
-              {/* cabello */}
               <rect x="-13" y="82" width="26" height="8" rx="4" fill="#4A2C0A"/>
-
-              {/* signo ? flotando sobre la cabeza */}
               <text x="0" y="76" textAnchor="middle"
                 fontFamily="Montserrat,sans-serif"
                 fontSize="16" fontWeight="700" fill="#FFD700"
                 style={{ animation: "flotarInterrogacion 0.6s ease-in-out infinite alternate" }}>
                 ?
               </text>
-
             </g>
-
-            {/* TEXTO */}
             <text x="250" y="40" textAnchor="middle"
               fontFamily="Montserrat, sans-serif"
               fontSize="18" fontWeight="700" fill="#00482B"
               style={{ animation: "fadeInText 0.5s ease forwards" }}>
               ¡Comienza el juicio!
             </text>
-
           </svg>
         </div>
       )}
@@ -270,10 +235,18 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
       }}>
         {menuActivo === "inicio" && (
           <div style={{ width: "600px", margin: "0 auto" }}>
-            <div style={{
-              width: "100%", height: "350px",
-              backgroundColor: "#D9D9D9", borderRadius: "10px",
-            }}/>
+
+            {/* ✅ VIDEO YOUTUBE */}
+            <iframe
+              width="100%"
+              height="350px"
+              src="https://www.youtube.com/embed/A69N6L35nVQ"
+              title="Video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ borderRadius: "10px" }}
+            />
 
             <div style={{ display: "flex", justifyContent: "center", marginTop: "30px" }}>
               <button

@@ -22,7 +22,9 @@ export default function Escenarios({ onCerrarSesion }) {
   useEffect(() => {
     cargarEscenarios();
     const id_usuario_raw = localStorage.getItem("id_usuario");
-    const id_usuario = id_usuario_raw ? Number(id_usuario_raw) : null;
+    const id_usuario = (id_usuario_raw && id_usuario_raw !== "null")
+      ? Number(id_usuario_raw)
+      : null;
     if (id_usuario) {
       cargarMisRespuestas(id_usuario);
     } else {
@@ -94,12 +96,18 @@ export default function Escenarios({ onCerrarSesion }) {
 
     const escenario = escenariosFiltrados[indiceActual];
     const id_usuario_raw = localStorage.getItem("id_usuario");
-    const id_usuario = id_usuario_raw ? Number(id_usuario_raw) : null;
-    const id_rol = localStorage.getItem("id_rol") ? Number(localStorage.getItem("id_rol")) : null;
+    // ✅ Fix: "null" string también se trata como null
+    const id_usuario = (id_usuario_raw && id_usuario_raw !== "null")
+      ? Number(id_usuario_raw)
+      : null;
+    const id_rol_raw = localStorage.getItem("id_rol");
+    const id_rol = (id_rol_raw && id_rol_raw !== "null")
+      ? Number(id_rol_raw)
+      : null;
 
     const opcionElegida = opciones.find((op) => op.id_opcion === idOpcion);
 
-    // Usuario anónimo: mostrar respuesta visualmente sin guardar en BD
+    // Usuario anónimo sin ID: solo mostrar visualmente, no guardar en BD
     if (!id_usuario) {
       setSelectedOption(idOpcion);
       setYaRespondio(true);
@@ -172,14 +180,14 @@ export default function Escenarios({ onCerrarSesion }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 130px",
-        height: "140px"
+        padding: "0 60px",
+        height: "100px"
       }}>
         <img
-         src={logo}
-         alt="ISU"
-         style={{ height: "120px", cursor: "pointer" }}
-         onClick={cerrarSesion}
+          src={logo}
+          alt="ISU"
+          style={{ height: "70px", cursor: "pointer" }}
+          onClick={cerrarSesion}
         />
 
         <button
@@ -417,9 +425,7 @@ export default function Escenarios({ onCerrarSesion }) {
             <h3 style={{ margin: "0 0 8px 0" }}>Praxis</h3>
             <p style={{ fontSize: "14px", margin: 0 }}>Plataforma educativa con IA</p>
           </div>
-
           <img src={LogoUdec} alt="UDEC" style={{ width: "250px" }} />
-
           <div style={{ textAlign: "right", fontSize: "14px" }}>
             <p style={{ margin: "0 0 4px 0" }}>© 2026</p>
             <p style={{ margin: 0 }}>Universidad de Cundinamarca</p>

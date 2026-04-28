@@ -119,7 +119,6 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
         padding: "0 20px",
         height: "80px",
         position: "relative"
-        
       }}>
         <img src={logo} alt="ISU" style={{ height: "60px", maxWidth: "150px", objectFit: "contain" }} />
 
@@ -224,10 +223,17 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
       }}>
         {menuActivo === "inicio" && (
           <div style={{ width: "90%", maxWidth: "600px", margin: "0 auto" }}>
-            <div style={{
-              width: "100%", height: "250px",
-              backgroundColor: "#D9D9D9", borderRadius: "10px",
-            }}/>
+            {/* VIDEO YOUTUBE */}
+            <iframe
+              width="100%"
+              height="250px"
+              src="https://www.youtube.com/embed/A69N6L35nVQ"
+              title="Video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ borderRadius: "10px" }}
+            />
             <div style={{ display: "flex", justifyContent: "center", marginTop: "30px" }}>
               <button
                 onClick={handleAnonimo}

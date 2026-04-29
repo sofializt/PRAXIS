@@ -9,22 +9,21 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
   const [animandoProfesor, setAnimandoProfesor] = useState(false);
   const [animandoAnonimo, setAnimandoAnonimo] = useState(false);
 
-  // 🔥 PING al backend para despertarlo apenas carga la página
   useEffect(() => {
     fetch("https://backend-isu.onrender.com/api/escenarios").catch(() => {});
   }, []);
 
   const manejarClickMenu = (key) => {
-      if (key === "proponer") {
-        window.open("https://forms.cloud.microsoft/r/iBJ4fHqZdq", "_blank");
+    if (key === "proponer") {
+      window.open("https://forms.cloud.microsoft/r/iBJ4fHqZdq", "_blank");
       return;
-      }
-      if (key === "juzga") { handleAnonimo(); return; }
-      setAnimar(false);
-      setTimeout(() => {
-        setMenuActivo(key);
-        setAnimar(true);
-      }, 150);
+    }
+    if (key === "juzga") { handleAnonimo(); return; }
+    setAnimar(false);
+    setTimeout(() => {
+      setMenuActivo(key);
+      setAnimar(true);
+    }, 150);
   };
 
   const handleSoyProfesor = () => {
@@ -245,8 +244,6 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
       }}>
         {menuActivo === "inicio" && (
           <div style={{ width: "600px", margin: "0 auto" }}>
-
-            {/* VIDEO YOUTUBE */}
             <iframe
               width="100%"
               height="350px"
@@ -257,7 +254,6 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
               allowFullScreen
               style={{ borderRadius: "10px" }}
             />
-
             <div style={{ display: "flex", justifyContent: "center", marginTop: "30px" }}>
               <button
                 onClick={handleAnonimo}
@@ -366,8 +362,8 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
               </a>
             </p>
           </div>
-       </div>
-    </footer>
+        </div>
+      </footer>
 
       <style>{`
         @keyframes caminar {

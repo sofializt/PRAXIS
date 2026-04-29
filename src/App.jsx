@@ -64,7 +64,7 @@ export default function App() {
   // Si ya hay sesión activa
   if (usuario) {
     if (usuario.id_rol === 2) return <PanelAdministrador usuario={usuario} />;
-    return <Escenarios onCerrarSesion={cerrarSesion} />;
+    return <Escenarios onCerrarSesion={cerrarSesion} usuario={usuario} />;
   }
 
   // Inicio público

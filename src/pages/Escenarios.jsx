@@ -9,7 +9,7 @@ const DIMENSIONES = [
   { id: 4, nombre: "Equidad" },
 ];
 
-export default function Escenarios({ onCerrarSesion }) {
+export default function Escenarios({ onCerrarSesion, usuario }) {
   const [escenarios, setEscenarios] = useState([]);
   const [indiceActual, setIndiceActual] = useState(0);
   const [opciones, setOpciones] = useState([]);
@@ -233,13 +233,25 @@ export default function Escenarios({ onCerrarSesion }) {
         </button>
       </nav>
 
-      {/* CERRAR SESIÓN — fuera del nav, sobre el área blanca */}
-      <div style={{ display: "flex", justifyContent: "flex-end", padding: "8px 60px 0 0" }}>
+      {/* BARRA VOLVER + CERRAR SESIÓN — siempre visible, misma fila */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px 130px" }}>
+        <span
+          onClick={() => { setDimensionSeleccionada(null); setIndiceActual(0); }}
+          style={{
+            cursor: "pointer",
+            color: "#007B3E",
+            fontWeight: "600",
+            fontSize: "15px",
+            visibility: dimensionSeleccionada ? "visible" : "hidden"
+          }}
+        >
+          ← Volver a categorías
+        </span>
         <span
           onClick={cerrarSesion}
           style={{
             color: "#00482B",
-            fontSize: "18px",
+            fontSize: "15px",
             fontWeight: "600",
             cursor: "pointer",
             textDecoration: "underline",
@@ -273,7 +285,7 @@ export default function Escenarios({ onCerrarSesion }) {
         {!cargandoEscenarios && !errorCarga && (
           <>
             {!dimensionSeleccionada && (
-              <div style={{ padding: "70px 80px", textAlign: "center" }}>
+              <div style={{ padding: "40px 80px", textAlign: "center" }}>
                 <h2 style={{ color: "#00482B", marginBottom: "50px" }}>Selecciona una categoría</h2>
                 <div style={{ display: "flex", gap: "40px", justifyContent: "center", flexWrap: "wrap" }}>
                   {DIMENSIONES.map((dim) => (
@@ -299,15 +311,6 @@ export default function Escenarios({ onCerrarSesion }) {
 
             {dimensionSeleccionada && escenario && (
               <div style={{ animation: "fadeIn 0.5s ease" }}>
-
-                <div style={{ padding: "20px 130px" }}>
-                  <span
-                    onClick={() => { setDimensionSeleccionada(null); setIndiceActual(0); }}
-                    style={{ cursor: "pointer", color: "#007B3E", fontWeight: "600" }}
-                  >
-                    ← Volver a categorías
-                  </span>
-                </div>
 
                 <div style={{
                   backgroundColor: "#FBE122", textAlign: "center",
@@ -386,12 +389,6 @@ export default function Escenarios({ onCerrarSesion }) {
             {dimensionSeleccionada && !escenario && (
               <div style={{ textAlign: "center", padding: "80px", color: "#007B3E" }}>
                 <p style={{ fontWeight: "600", fontSize: "18px" }}>No hay escenarios disponibles en esta categoría por ahora.</p>
-                <span
-                  onClick={() => { setDimensionSeleccionada(null); setIndiceActual(0); }}
-                  style={{ cursor: "pointer", color: "#007B3E", fontWeight: "600", textDecoration: "underline" }}
-                >
-                  ← Volver a categorías
-                </span>
               </div>
             )}
           </>

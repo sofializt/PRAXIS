@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../assets/praxis.svg";
 import LogoUdec from "../assets/udecblanco.png";
 import qr from "../assets/qr.png";
@@ -8,6 +8,11 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
   const [animar, setAnimar] = useState(true);
   const [animandoProfesor, setAnimandoProfesor] = useState(false);
   const [animandoAnonimo, setAnimandoAnonimo] = useState(false);
+
+  // 🔥 PING al backend para despertarlo apenas carga la página
+  useEffect(() => {
+    fetch("https://backend-isu.onrender.com/api/escenarios").catch(() => {});
+  }, []);
 
   const manejarClickMenu = (key) => {
     setAnimar(false);

@@ -272,39 +272,46 @@ export default function Escenarios({ onCerrarSesion }) {
           >
             Proponer escenario
           </span>
-
-          <span
-            onClick={cerrarSesion}
-            style={{
-              color: "white", fontWeight: "600",
-              fontSize: "16px", cursor: "pointer",
-              borderBottom: "2px solid transparent",
-            }}
-          >
-            Cerrar sesión
-          </span>
         </div>
 
-        <button
-          onClick={cerrarSesion}
-          style={{
-            backgroundColor: "white",
-            color: "#00482B",
-            border: "none",
-            borderRadius: "30px",
-            padding: "12px 28px",
-            fontWeight: "700",
-            fontSize: "15px",
-            cursor: "pointer",
-            transition: "all 0.3s",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
-          }}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+          <button
+            onClick={cerrarSesion}
+            style={{
+              backgroundColor: "white",
+              color: "#00482B",
+              border: "none",
+              borderRadius: "30px",
+              padding: "12px 28px",
+              fontWeight: "700",
+              fontSize: "15px",
+              cursor: "pointer",
+              transition: "all 0.3s",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+           }}
           onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
           onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
         >
           SOY PROFESOR
         </button>
-      </nav>
+        <span
+           onClick={cerrarSesion}
+           style={{
+             color: "#00482B",
+             fontSize: "13px",
+             fontWeight: "600",
+             cursor: "pointer",
+             textDecoration: "underline",
+             backgroundColor: "white",
+             borderRadius: "10px",
+             padding: "2px 10px",
+          }}
+        >
+          Cerrar sesión
+        </span>
+      </div>
+
+    </nav>
 
       {/* CONTENIDO PRINCIPAL */}
       <div style={{ flex: 1 }}>

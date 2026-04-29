@@ -19,21 +19,14 @@ export default function Escenarios({ onCerrarSesion }) {
   const [misRespuestas, setMisRespuestas] = useState([]);
   const [dimensionSeleccionada, setDimensionSeleccionada] = useState(null);
 
-  // ✅ Estados de carga
   const [cargandoEscenarios, setCargandoEscenarios] = useState(true);
   const [cargandoOpciones, setCargandoOpciones] = useState(false);
   const [errorCarga, setErrorCarga] = useState(false);
 
   useEffect(() => {
     cargarEscenarios();
-
     const id_usuario_raw = localStorage.getItem("id_usuario");
-    // ✅ Fix: "null" string también se trata como null
-    const id_usuario = (id_usuario_raw && id_usuario_raw !== "null")
-      ? Number(id_usuario_raw)
-      : null;
-
-    // ✅ Solo carga respuestas si hay un usuario real, no anónimo
+    const id_usuario = (id_usuario_raw && id_usuario_raw !== "null") ? Number(id_usuario_raw) : null;
     if (id_usuario) {
       cargarMisRespuestas(id_usuario);
     } else {
@@ -94,11 +87,7 @@ export default function Escenarios({ onCerrarSesion }) {
   const validarSiYaRespondio = () => {
     const escenario = escenariosFiltrados[indiceActual];
     if (!escenario) return;
-
-    const ya = misRespuestas.find(
-      (r) => r.id_escenario === escenario.id_escenario
-    );
-
+    const ya = misRespuestas.find((r) => r.id_escenario === escenario.id_escenario);
     if (ya) {
       setYaRespondio(true);
       setSelectedOption(ya.id_opcion);
@@ -112,21 +101,13 @@ export default function Escenarios({ onCerrarSesion }) {
 
   const seleccionar = async (idOpcion) => {
     if (yaRespondio) return;
-
     const escenario = escenariosFiltrados[indiceActual];
     const id_usuario_raw = localStorage.getItem("id_usuario");
-    // ✅ Fix: "null" string también se trata como null
-    const id_usuario = (id_usuario_raw && id_usuario_raw !== "null")
-      ? Number(id_usuario_raw)
-      : null;
+    const id_usuario = (id_usuario_raw && id_usuario_raw !== "null") ? Number(id_usuario_raw) : null;
     const id_rol_raw = localStorage.getItem("id_rol");
-    const id_rol = (id_rol_raw && id_rol_raw !== "null")
-      ? Number(id_rol_raw)
-      : null;
-
+    const id_rol = (id_rol_raw && id_rol_raw !== "null") ? Number(id_rol_raw) : null;
     const opcionElegida = opciones.find((op) => op.id_opcion === idOpcion);
 
-    // ✅ Usuario anónimo: solo mostrar visualmente, no guardar en BD
     if (!id_usuario) {
       setSelectedOption(idOpcion);
       setYaRespondio(true);
@@ -138,26 +119,14 @@ export default function Escenarios({ onCerrarSesion }) {
       const res = await fetch("https://backend-isu.onrender.com/api/respuestas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id_usuario,
-          id_rol,
-          id_opcion: idOpcion,
-          id_escenario: escenario.id_escenario
-        })
+        body: JSON.stringify({ id_usuario, id_rol, id_opcion: idOpcion, id_escenario: escenario.id_escenario })
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        return;
-      }
-
+      if (!res.ok) { alert(data.message); return; }
       setSelectedOption(idOpcion);
       setYaRespondio(true);
       setRespuestaTexto(opcionElegida?.descripcion || "Respuesta guardada");
       cargarMisRespuestas(id_usuario);
-
     } catch (error) {
       console.error(error);
     }
@@ -184,43 +153,15 @@ export default function Escenarios({ onCerrarSesion }) {
 
   const escenario = escenariosFiltrados[indiceActual];
 
-  // ✅ Spinner reutilizable
   const Spinner = ({ mensaje = "Cargando..." }) => (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "100px 0",
-      gap: "20px"
-    }}>
-      <div style={{
-        width: "52px",
-        height: "52px",
-        border: "5px solid #DFF5EA",
-        borderTop: "5px solid #007B3E",
-        borderRadius: "50%",
-        animation: "girar 0.8s linear infinite"
-      }} />
-      <p style={{
-        color: "#007B3E",
-        fontWeight: "600",
-        fontSize: "16px",
-        margin: 0
-      }}>
-        {mensaje}
-      </p>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "100px 0", gap: "20px" }}>
+      <div style={{ width: "52px", height: "52px", border: "5px solid #DFF5EA", borderTop: "5px solid #007B3E", borderRadius: "50%", animation: "girar 0.8s linear infinite" }} />
+      <p style={{ color: "#007B3E", fontWeight: "600", fontSize: "16px", margin: 0 }}>{mensaje}</p>
     </div>
   );
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      backgroundColor: "#FFFFFF",
-      fontFamily: "Montserrat, sans-serif",
-      display: "flex",
-      flexDirection: "column"
-    }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#FFFFFF", fontFamily: "Montserrat, sans-serif", display: "flex", flexDirection: "column" }}>
 
       {/* HEADER */}
       <nav style={{
@@ -247,7 +188,7 @@ export default function Escenarios({ onCerrarSesion }) {
             <span
               key={key}
               onClick={() => {
-                if (key === "juzga") return; // ya estás en escenarios
+                if (key === "juzga") return;
                 if (key === "inicio") { cerrarSesion(); return; }
                 if (key === "que") { cerrarSesion(); return; }
               }}
@@ -256,7 +197,7 @@ export default function Escenarios({ onCerrarSesion }) {
                 fontWeight: "600",
                 fontSize: "16px",
                 cursor: "pointer",
-                borderBottom: "2px solid transparent",
+                borderBottom: key === "juzga" ? "2px solid white" : "2px solid transparent",
               }}
             >
               {label}
@@ -265,131 +206,89 @@ export default function Escenarios({ onCerrarSesion }) {
 
           <span
             onClick={() => window.open("https://forms.cloud.microsoft/r/iBJ4fHqZdq", "_blank")}
-            style={{
-              color: "white", fontWeight: "600",
-              fontSize: "16px", cursor: "pointer",
-            }}
+            style={{ color: "white", fontWeight: "600", fontSize: "16px", cursor: "pointer" }}
           >
             Proponer escenario
           </span>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
-          <button
-            onClick={cerrarSesion}
-            style={{
-              backgroundColor: "white",
-              color: "#00482B",
-              border: "none",
-              borderRadius: "30px",
-              padding: "12px 28px",
-              fontWeight: "700",
-              fontSize: "15px",
-              cursor: "pointer",
-              transition: "all 0.3s",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
-           }}
+        <button
+          onClick={cerrarSesion}
+          style={{
+            backgroundColor: "white",
+            color: "#00482B",
+            border: "none",
+            borderRadius: "30px",
+            padding: "12px 28px",
+            fontWeight: "700",
+            fontSize: "15px",
+            cursor: "pointer",
+            transition: "all 0.3s",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+          }}
           onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
           onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
         >
           SOY PROFESOR
         </button>
+      </nav>
+
+      {/* CERRAR SESIÓN — fuera del nav, sobre el área blanca */}
+      <div style={{ display: "flex", justifyContent: "flex-end", padding: "8px 60px 0 0" }}>
         <span
-           onClick={cerrarSesion}
-           style={{
-             color: "#00482B",
-             fontSize: "13px",
-             fontWeight: "600",
-             cursor: "pointer",
-             textDecoration: "underline",
-             backgroundColor: "white",
-             borderRadius: "10px",
-             padding: "2px 10px",
+          onClick={cerrarSesion}
+          style={{
+            color: "#00482B",
+            fontSize: "13px",
+            fontWeight: "600",
+            cursor: "pointer",
+            textDecoration: "underline",
           }}
         >
           Cerrar sesión
         </span>
       </div>
 
-    </nav>
-
       {/* CONTENIDO PRINCIPAL */}
       <div style={{ flex: 1 }}>
 
-        {/* ✅ ESTADO: Cargando escenarios */}
         {cargandoEscenarios && (
           <Spinner mensaje="Cargando escenarios... esto puede tardar unos segundos" />
         )}
 
-        {/* ✅ ESTADO: Error al cargar */}
         {!cargandoEscenarios && errorCarga && (
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "100px 0",
-            gap: "16px"
-          }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "100px 0", gap: "16px" }}>
             <p style={{ color: "#cc0000", fontWeight: "600", fontSize: "16px" }}>
               ⚠ No se pudo conectar al servidor. Intenta de nuevo.
             </p>
             <button
               onClick={cargarEscenarios}
-              style={{
-                backgroundColor: "#007B3E",
-                color: "white",
-                border: "none",
-                borderRadius: "25px",
-                padding: "12px 28px",
-                fontWeight: "700",
-                cursor: "pointer",
-                fontSize: "15px"
-              }}
+              style={{ backgroundColor: "#007B3E", color: "white", border: "none", borderRadius: "25px", padding: "12px 28px", fontWeight: "700", cursor: "pointer", fontSize: "15px" }}
             >
               Reintentar
             </button>
           </div>
         )}
 
-        {/* CONTENIDO NORMAL (solo si ya cargó y no hay error) */}
         {!cargandoEscenarios && !errorCarga && (
           <>
-            {/* MENÚ DE DIMENSIONES */}
             {!dimensionSeleccionada && (
               <div style={{ padding: "70px 80px", textAlign: "center" }}>
-                <h2 style={{ color: "#00482B", marginBottom: "50px" }}>
-                  Selecciona una categoría
-                </h2>
-
-                <div style={{
-                  display: "flex",
-                  gap: "40px",
-                  justifyContent: "center",
-                  flexWrap: "wrap"
-                }}>
+                <h2 style={{ color: "#00482B", marginBottom: "50px" }}>Selecciona una categoría</h2>
+                <div style={{ display: "flex", gap: "40px", justifyContent: "center", flexWrap: "wrap" }}>
                   {DIMENSIONES.map((dim) => (
                     <div
                       key={dim.id}
                       onClick={() => { setDimensionSeleccionada(dim.id); setIndiceActual(0); }}
                       style={{
-                        backgroundColor: "#007B3E",
-                        color: "white",
-                        padding: "60px 70px",
-                        borderRadius: "18px",
-                        cursor: "pointer",
-                        fontWeight: "600",
-                        fontSize: "20px",
-                        minWidth: "220px",
-                        transition: "all 0.3s",
+                        backgroundColor: "#007B3E", color: "white",
+                        padding: "60px 70px", borderRadius: "18px",
+                        cursor: "pointer", fontWeight: "600", fontSize: "20px",
+                        minWidth: "220px", transition: "all 0.3s",
                         boxShadow: "0 6px 15px rgba(0,0,0,0.15)"
                       }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "translateY(-8px) scale(1.05)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = "translateY(0) scale(1)";
-                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-8px) scale(1.05)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0) scale(1)"; }}
                     >
                       {dim.nombre}
                     </div>
@@ -398,11 +297,9 @@ export default function Escenarios({ onCerrarSesion }) {
               </div>
             )}
 
-            {/* ESCENARIO */}
             {dimensionSeleccionada && escenario && (
               <div style={{ animation: "fadeIn 0.5s ease" }}>
 
-                {/* VOLVER */}
                 <div style={{ padding: "20px 130px" }}>
                   <span
                     onClick={() => { setDimensionSeleccionada(null); setIndiceActual(0); }}
@@ -412,79 +309,43 @@ export default function Escenarios({ onCerrarSesion }) {
                   </span>
                 </div>
 
-                {/* BARRA CATEGORÍA */}
                 <div style={{
-                  backgroundColor: "#FBE122",
-                  textAlign: "center",
-                  padding: "18px",
-                  fontWeight: "700",
-                  fontSize: "20px",
-                  color: "#00482B",
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
+                  backgroundColor: "#FBE122", textAlign: "center",
+                  padding: "18px", fontWeight: "700", fontSize: "20px",
+                  color: "#00482B", boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
                 }}>
                   {DIMENSIONES.find((d) => d.id === dimensionSeleccionada)?.nombre}
                 </div>
 
                 <div style={{ padding: "30px 130px", maxWidth: "1000px", margin: "0 auto" }}>
-                  <h2 style={{ color: "#00482B", textAlign: "center" }}>
-                    {escenario.titulo}
-                  </h2>
-
-                  <div style={{
-                    backgroundColor: "#F5F5F5",
-                    borderRadius: "14px",
-                    padding: "20px",
-                    marginTop: "20px"
-                  }}>
+                  <h2 style={{ color: "#00482B", textAlign: "center" }}>{escenario.titulo}</h2>
+                  <div style={{ backgroundColor: "#F5F5F5", borderRadius: "14px", padding: "20px", marginTop: "20px" }}>
                     <p style={{ lineHeight: "1.7" }}>
                       <strong style={{ color: "#007B3E" }}>Situación: </strong>
                       {escenario.descripcion}
                     </p>
                   </div>
-
-                  <p style={{
-                    textAlign: "center",
-                    fontWeight: "600",
-                    marginTop: "20px",
-                    color: "#00482B"
-                  }}>
+                  <p style={{ textAlign: "center", fontWeight: "600", marginTop: "20px", color: "#00482B" }}>
                     {escenario.pregunta}
                   </p>
                 </div>
 
-                {/* ✅ OPCIONES o spinner de opciones */}
                 {cargandoOpciones ? (
                   <Spinner mensaje="Cargando opciones..." />
                 ) : (
-                  <div style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "30px",
-                    padding: "0 130px",
-                    maxWidth: "1000px",
-                    margin: "0 auto"
-                  }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "30px", padding: "0 130px", maxWidth: "1000px", margin: "0 auto" }}>
                     {opciones.map((opcion) => (
                       <div
                         key={opcion.id_opcion}
                         onClick={() => seleccionar(opcion.id_opcion)}
                         style={{
-                          backgroundColor: "white",
-                          borderRadius: "16px",
-                          overflow: "hidden",
-                          border: selectedOption === opcion.id_opcion
-                            ? "4px solid #007B3E"
-                            : "4px solid transparent",
+                          backgroundColor: "white", borderRadius: "16px", overflow: "hidden",
+                          border: selectedOption === opcion.id_opcion ? "4px solid #007B3E" : "4px solid transparent",
                           cursor: yaRespondio ? "default" : "pointer",
-                          transition: "all 0.3s",
-                          boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
+                          transition: "all 0.3s", boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
                         }}
-                        onMouseEnter={(e) => {
-                          if (!yaRespondio) e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = "translateY(0) scale(1)";
-                        }}
+                        onMouseEnter={(e) => { if (!yaRespondio) e.currentTarget.style.transform = "translateY(-6px) scale(1.02)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0) scale(1)"; }}
                       >
                         <img
                           src={`https://backend-isu.onrender.com/uploads/${opcion.imagen}`}
@@ -499,72 +360,32 @@ export default function Escenarios({ onCerrarSesion }) {
                   </div>
                 )}
 
-                {/* RESPUESTA */}
                 {yaRespondio && (
-                  <div style={{
-                    marginTop: "25px",
-                    textAlign: "center",
-                    color: "#00482B",
-                    fontWeight: "600",
-                    animation: "pop 0.4s ease"
-                  }}>
+                  <div style={{ marginTop: "25px", textAlign: "center", color: "#00482B", fontWeight: "600", animation: "pop 0.4s ease" }}>
                     ✔ Tu respuesta fue: {respuestaTexto}
                   </div>
                 )}
 
-                {/* FLECHAS */}
-                <div style={{
-                  position: "fixed",
-                  top: "50%",
-                  left: "0",
-                  right: "0",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "0 40px",
-                  transform: "translateY(-50%)",
-                  pointerEvents: "none"
-                }}>
+                <div style={{ position: "fixed", top: "50%", left: "0", right: "0", display: "flex", justifyContent: "space-between", padding: "0 40px", transform: "translateY(-50%)", pointerEvents: "none" }}>
                   <span
                     onClick={anteriorEscenario}
-                    style={{
-                      fontSize: "70px",
-                      cursor: indiceActual > 0 ? "pointer" : "default",
-                      color: indiceActual > 0 ? "#007B3E" : "#ccc",
-                      pointerEvents: "auto",
-                      transition: "0.3s",
-                      userSelect: "none"
-                    }}
+                    style={{ fontSize: "70px", cursor: indiceActual > 0 ? "pointer" : "default", color: indiceActual > 0 ? "#007B3E" : "#ccc", pointerEvents: "auto", transition: "0.3s", userSelect: "none" }}
                     onMouseEnter={(e) => { if (indiceActual > 0) e.target.style.transform = "scale(1.2)"; }}
                     onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-                  >
-                    ←
-                  </span>
-
+                  >←</span>
                   <span
                     onClick={siguienteEscenario}
-                    style={{
-                      fontSize: "70px",
-                      cursor: indiceActual < escenariosFiltrados.length - 1 ? "pointer" : "default",
-                      color: indiceActual < escenariosFiltrados.length - 1 ? "#007B3E" : "#ccc",
-                      pointerEvents: "auto",
-                      transition: "0.3s",
-                      userSelect: "none"
-                    }}
+                    style={{ fontSize: "70px", cursor: indiceActual < escenariosFiltrados.length - 1 ? "pointer" : "default", color: indiceActual < escenariosFiltrados.length - 1 ? "#007B3E" : "#ccc", pointerEvents: "auto", transition: "0.3s", userSelect: "none" }}
                     onMouseEnter={(e) => { if (indiceActual < escenariosFiltrados.length - 1) e.target.style.transform = "scale(1.2)"; }}
                     onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-                  >
-                    →
-                  </span>
+                  >→</span>
                 </div>
               </div>
             )}
 
-            {/* Sin escenarios en la dimensión */}
             {dimensionSeleccionada && !escenario && (
               <div style={{ textAlign: "center", padding: "80px", color: "#007B3E" }}>
-                <p style={{ fontWeight: "600", fontSize: "18px" }}>
-                  No hay escenarios disponibles en esta categoría por ahora.
-                </p>
+                <p style={{ fontWeight: "600", fontSize: "18px" }}>No hay escenarios disponibles en esta categoría por ahora.</p>
                 <span
                   onClick={() => { setDimensionSeleccionada(null); setIndiceActual(0); }}
                   style={{ cursor: "pointer", color: "#007B3E", fontWeight: "600", textDecoration: "underline" }}

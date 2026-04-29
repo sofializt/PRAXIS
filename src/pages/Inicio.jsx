@@ -3,7 +3,7 @@ import logo from "../assets/praxis.svg";
 import LogoUdec from "../assets/udecblanco.png";
 import qr from "../assets/qr.png";
 
-export default function Inicio({ onSoyProfesor, onJuzga }) {
+export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
   const [menuActivo, setMenuActivo] = useState("inicio");
   const [animar, setAnimar] = useState(true);
   const [animandoProfesor, setAnimandoProfesor] = useState(false);
@@ -214,25 +214,28 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
           </span>
         </div>
 
-        <button
-          onClick={handleSoyProfesor}
-          disabled={animandoProfesor}
-          style={{
-            backgroundColor: "white",
-            color: "#00482B",
-            border: "none",
-            borderRadius: "30px",
-            padding: "12px 28px",
-            fontWeight: "700",
-            fontSize: "15px",
-            cursor: animandoProfesor ? "default" : "pointer",
-            transition: "all 0.3s",
-            transform: animandoProfesor ? "scale(0.95)" : "scale(1)",
-            boxShadow: animandoProfesor ? "none" : "0 4px 12px rgba(0,0,0,0.2)"
-          }}
-        >
-          SOY PROFESOR
-        </button>
+        {/* ✅ Solo se muestra si no hay usuario o si el rol es 4 (no docente) */}
+        {(!usuario || usuario.id_rol === 4) && (
+          <button
+            onClick={handleSoyProfesor}
+            disabled={animandoProfesor}
+            style={{
+              backgroundColor: "white",
+              color: "#00482B",
+              border: "none",
+              borderRadius: "30px",
+              padding: "12px 28px",
+              fontWeight: "700",
+              fontSize: "15px",
+              cursor: animandoProfesor ? "default" : "pointer",
+              transition: "all 0.3s",
+              transform: animandoProfesor ? "scale(0.95)" : "scale(1)",
+              boxShadow: animandoProfesor ? "none" : "0 4px 12px rgba(0,0,0,0.2)"
+            }}
+          >
+            SOY PROFESOR
+          </button>
+        )}
       </nav>
 
       {/* CONTENIDO */}
@@ -341,10 +344,6 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
       {/* FOOTER */}
       <footer style={{ backgroundColor: "#00482B", color: "white", padding: "30px 130px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <h3>Praxis</h3>
-            <p style={{ fontSize: "14px" }}>Plataforma educativa con IA</p>
-          </div>
           <img src={LogoUdec} alt="UDEC" style={{ width: "250px" }} />
           <div style={{ textAlign: "right", fontSize: "12px", lineHeight: "1.8" }}>
             <p>

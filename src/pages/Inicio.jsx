@@ -214,9 +214,9 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
           </span>
         </div>
 
-      {(!usuario || usuario.id_rol === 4) && (
         <button
-          onClick={cerrarSesion}
+          onClick={handleSoyProfesor}
+          disabled={animandoProfesor}
           style={{
             backgroundColor: "white",
             color: "#00482B",
@@ -233,7 +233,6 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
         >
           SOY PROFESOR
         </button>
-      )}
       </nav>
 
       {/* CONTENIDO */}

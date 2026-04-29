@@ -225,6 +225,7 @@ export default function Escenarios({ onCerrarSesion }) {
       {/* HEADER */}
       <nav style={{
         backgroundColor: "#007B3E",
+        display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         padding: "0 60px",

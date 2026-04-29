@@ -344,18 +344,30 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
 
       {/* FOOTER */}
       <footer style={{ backgroundColor: "#00482B", color: "white", padding: "30px 130px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <h3>Praxis</h3>
             <p style={{ fontSize: "14px" }}>Plataforma educativa con IA</p>
           </div>
           <img src={LogoUdec} alt="UDEC" style={{ width: "250px" }} />
-          <div style={{ textAlign: "right", fontSize: "14px" }}>
-            <p>© 2026</p>
+          <div style={{ textAlign: "right", fontSize: "12px", lineHeight: "1.8" }}>
+            <p>
+              <a href="https://praxis-eight-kappa.vercel.app/" style={{ color: "white", fontWeight: "700" }} target="_blank" rel="noreferrer">Praxis</a>{" "}© 2026 by{" "}
+              <a href="https://www.researchgate.net/profile/Hugo-Rozo-Garcia" style={{ color: "white", fontWeight: "700" }} target="_blank" rel="noreferrer">Hugo Rozo</a>
+            </p>
             <p>Universidad de Cundinamarca</p>
+            <p style={{ marginTop: "4px" }}>
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer" style={{ color: "white", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                CC BY-NC-SA 4.0
+                <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style={{ width: "16px", filter: "invert(1)" }} />
+                <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style={{ width: "16px", filter: "invert(1)" }} />
+                <img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="NC" style={{ width: "16px", filter: "invert(1)" }} />
+                <img src="https://mirrors.creativecommons.org/presskit/icons/sa.svg" alt="SA" style={{ width: "16px", filter: "invert(1)" }} />
+              </a>
+            </p>
           </div>
-        </div>
-      </footer>
+       </div>
+    </footer>
 
       <style>{`
         @keyframes caminar {

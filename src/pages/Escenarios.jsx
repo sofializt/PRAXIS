@@ -223,13 +223,12 @@ export default function Escenarios({ onCerrarSesion }) {
     }}>
 
       {/* HEADER */}
-      <div style={{
+      <nav style={{
         backgroundColor: "#007B3E",
-        display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         padding: "0 60px",
-        height: "100px"
+        height: "100px",
       }}>
         <img
           src={logo}
@@ -238,25 +237,73 @@ export default function Escenarios({ onCerrarSesion }) {
           onClick={cerrarSesion}
         />
 
+        <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
+          {[
+            { label: "Inicio", key: "inicio" },
+            { label: "¿Qué hacemos?", key: "que" },
+            { label: "Juzga", key: "juzga" },
+          ].map(({ label, key }) => (
+            <span
+              key={key}
+              onClick={() => {
+                if (key === "juzga") return; // ya estás en escenarios
+                if (key === "inicio") { cerrarSesion(); return; }
+                if (key === "que") { cerrarSesion(); return; }
+              }}
+              style={{
+                color: "white",
+                fontWeight: "600",
+                fontSize: "16px",
+                cursor: "pointer",
+                borderBottom: "2px solid transparent",
+              }}
+            >
+              {label}
+            </span>
+          ))}
+
+          <span
+            onClick={() => window.open("https://forms.cloud.microsoft/r/iBJ4fHqZdq", "_blank")}
+            style={{
+              color: "white", fontWeight: "600",
+              fontSize: "16px", cursor: "pointer",
+            }}
+          >
+            Proponer escenario
+          </span>
+
+          <span
+            onClick={cerrarSesion}
+            style={{
+              color: "white", fontWeight: "600",
+              fontSize: "16px", cursor: "pointer",
+              borderBottom: "2px solid transparent",
+            }}
+          >
+            Cerrar sesión
+          </span>
+        </div>
+
         <button
           onClick={cerrarSesion}
           style={{
             backgroundColor: "white",
             color: "#00482B",
             border: "none",
-            borderRadius: "25px",
-            padding: "12px 26px",
+            borderRadius: "30px",
+            padding: "12px 28px",
             fontWeight: "700",
             fontSize: "15px",
             cursor: "pointer",
-            transition: "0.3s"
+            transition: "all 0.3s",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
           }}
-          onMouseEnter={(e) => e.target.style.transform = "scale(1.08)"}
+          onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
           onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
         >
-          Cerrar sesión
+          SOY PROFESOR
         </button>
-      </div>
+      </nav>
 
       {/* CONTENIDO PRINCIPAL */}
       <div style={{ flex: 1 }}>
@@ -548,7 +595,7 @@ export default function Escenarios({ onCerrarSesion }) {
           </div>
         </div>
       </footer>
-      
+
       <style>
         {`
         @keyframes fadeIn {

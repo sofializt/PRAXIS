@@ -239,7 +239,7 @@ export default function Escenarios({ onCerrarSesion }) {
           onClick={cerrarSesion}
           style={{
             color: "#00482B",
-            fontSize: "13px",
+            fontSize: "18px",
             fontWeight: "600",
             cursor: "pointer",
             textDecoration: "underline",

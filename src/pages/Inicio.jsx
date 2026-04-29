@@ -15,16 +15,16 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
   }, []);
 
   const manejarClickMenu = (key) => {
-    setAnimar(false);
-    setTimeout(() => {
-      if (key === "juzga") { handleAnonimo(); return; }
       if (key === "proponer") {
         window.open("https://forms.cloud.microsoft/r/iBJ4fHqZdq", "_blank");
-        return;
+      return;
       }
-      setMenuActivo(key);
-      setAnimar(true);
-    }, 150);
+      if (key === "juzga") { handleAnonimo(); return; }
+      setAnimar(false);
+      setTimeout(() => {
+        setMenuActivo(key);
+        setAnimar(true);
+      }, 150);
   };
 
   const handleSoyProfesor = () => {

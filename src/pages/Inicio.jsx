@@ -234,7 +234,7 @@ export default function Inicio({ onSoyProfesor, onJuzga }) {
           SOY PROFESOR
         </button>
       )}
-    </nav>
+      </nav>
 
       {/* CONTENIDO */}
       <div style={{

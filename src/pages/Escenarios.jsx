@@ -504,10 +504,6 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
       {/* FOOTER */}
       <footer style={{ backgroundColor: "#00482B", color: "white", padding: "30px 130px", marginTop: "80px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <h3>Praxis</h3>
-            <p style={{ fontSize: "14px" }}>Plataforma educativa con IA</p>
-          </div>
           <img src={LogoUdec} alt="UDEC" style={{ width: "250px" }} />
           <div style={{ textAlign: "right", fontSize: "12px", lineHeight: "1.8" }}>
             <p>

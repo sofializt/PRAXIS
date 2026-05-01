@@ -2,6 +2,16 @@ import { useState, useEffect } from "react";
 import logo from "../assets/praxis.svg";
 import LogoUdec from "../assets/udecblanco.png";
 
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return isMobile;
+};
+
 export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   const [form, setForm] = useState({
     nombre: "", apellido: "", correo: "", contraseña: "", confirmar: "",
@@ -9,10 +19,10 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   });
   const [cargando, setCargando] = useState(false);
   const [completo, setCompleto] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  // Detectar si todos los campos están llenos
   useEffect(() => {
     const todosLlenos = Object.values(form).every((v) => v.trim() !== "");
     setCompleto(todosLlenos);
@@ -55,188 +65,165 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", fontFamily: "Montserrat, sans-serif" }}>
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: isMobile ? "column" : "row", // 👈 columna en móvil
+      fontFamily: "Montserrat, sans-serif"
+    }}>
 
       {/* PANEL IZQUIERDO — verde */}
       <div style={{
-        width: "45%", backgroundColor: "#00482B", display: "flex", flexDirection: "column",
-        alignItems: "center", justifyContent: "center", padding: "60px 50px",
+        width: isMobile ? "100%" : "45%", // 👈
+        backgroundColor: "#00482B",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        padding: isMobile ? "30px 24px" : "60px 50px", // 👈
         animation: "slideInLeft 0.6s ease forwards"
       }}>
         <img
-         src={logo}
-         alt="Praxis"
-         style={{ width: "200px", marginBottom: "30px", cursor: "pointer" }}
-         onClick={() => window.location.href = "/"}
+          src={logo}
+          alt="Praxis"
+          style={{ width: isMobile ? "140px" : "200px", marginBottom: "20px", cursor: "pointer" }} // 👈
+          onClick={() => window.location.href = "/"}
         />
 
-        {/* MUÑEQUITO CON ANIMACIÓN CONDICIONAL */}
-        <div style={{ position: "relative", marginBottom: "20px" }}>
-          <svg
-            width="130"
-            height="180"
-            viewBox="0 0 130 180"
-            style={{ overflow: "visible" }}
-          >
-            {/* Estrellitas — solo visibles cuando completo */}
-            {completo && (
-              <>
-                <text x="5" y="55" fill="#FFD700" fontSize="18"
-                  style={{ animation: "estrella1 1.2s ease-in-out infinite" }}>★</text>
-                <text x="100" y="55" fill="#FFD700" fontSize="18"
-                  style={{ animation: "estrella2 1.2s ease-in-out infinite" }}>★</text>
-                <text x="55" y="20" fill="#FFD700" fontSize="13"
-                  style={{ animation: "estrella3 1.4s ease-in-out infinite" }}>★</text>
-              </>
-            )}
-
-            {/* Sombra animada */}
-            <ellipse
-              cx="65" cy="173" rx="22" ry="5"
-              fill="rgba(0,0,0,0.2)"
-              style={completo ? { animation: "sombra 1.4s ease-in-out infinite" } : {}}
-            />
-
-            {/* Todo el cuerpo en un grupo que salta */}
-            <g style={completo ? { animation: "saltar 1.4s ease-in-out infinite" } : {}}>
-              {/* Piernas */}
-              <line
-                x1="58" y1="120" x2="48" y2="155" stroke="#005E2B" strokeWidth="8" strokeLinecap="round"
-                style={completo ? { animation: "piernaIzqSalto 1.4s ease-in-out infinite", transformOrigin: "58px 120px" } : { transformOrigin: "58px 120px", transform: "rotate(0deg)" }}
-              />
-              <line
-                x1="74" y1="120" x2="84" y2="155" stroke="#005E2B" strokeWidth="8" strokeLinecap="round"
-                style={completo ? { animation: "piernaDerSalto 1.4s ease-in-out infinite", transformOrigin: "74px 120px" } : { transformOrigin: "74px 120px", transform: "rotate(0deg)" }}
-              />
-
-              {/* Cuerpo */}
-              <rect x="48" y="85" width="36" height="38" rx="6" fill="#007B3E" />
-              <polygon points="66,90 62,107 66,104 70,107" fill="#FFD700" />
-
-              {/* Brazos */}
-              <line
-                x1="48" y1="92" x2="28" y2={completo ? "68" : "110"}
-                stroke="#F5CBA7" strokeWidth="7" strokeLinecap="round"
-                style={completo
-                  ? { animation: "brazoIzqSalto 1.4s ease-in-out infinite", transformOrigin: "48px 92px" }
-                  : { transition: "all 0.4s ease" }}
-              />
-              <line
-                x1="84" y1="92" x2="104" y2={completo ? "68" : "110"}
-                stroke="#F5CBA7" strokeWidth="7" strokeLinecap="round"
-                style={completo
-                  ? { animation: "brazoDerSalto 1.4s ease-in-out infinite", transformOrigin: "84px 92px" }
-                  : { transition: "all 0.4s ease" }}
-              />
-
-              {/* Maletín — desaparece cuando salta */}
-              {!completo && (
-                <g>
-                  <rect x="106" y="108" width="18" height="14" rx="3" fill="#8B6914" stroke="#5C4A1E" strokeWidth="1.5" />
-                  <path d="M 109 108 Q 109 104 115 104 Q 121 104 121 108" stroke="#5C4A1E" strokeWidth="1.5" fill="none" />
-                </g>
-              )}
-
-              {/* Cuello */}
-              <rect x="61" y="72" width="10" height="15" rx="3" fill="#F5CBA7" />
-
-              {/* Cabeza */}
-              <circle cx="66" cy="57" r="22" fill="#F5CBA7" />
-              {/* Cabello */}
-              <rect x="44" y="35" width="44" height="14" rx="7" fill="#4A2C0A" />
-
-              {/* Ojos: normales o arcos de alegría */}
-              {completo ? (
+        {/* MUÑEQUITO — oculto en móvil para ahorrar espacio */}
+        {!isMobile && (
+          <div style={{ position: "relative", marginBottom: "20px" }}>
+            <svg width="130" height="180" viewBox="0 0 130 180" style={{ overflow: "visible" }}>
+              {completo && (
                 <>
-                  <path d="M 57 52 Q 60 47 63 52" stroke="#333" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-                  <path d="M 69 52 Q 72 47 75 52" stroke="#333" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-                </>
-              ) : (
-                <>
-                  <circle cx="60" cy="54" r="3" fill="#333" />
-                  <circle cx="72" cy="54" r="3" fill="#333" />
+                  <text x="5" y="55" fill="#FFD700" fontSize="18"
+                    style={{ animation: "estrella1 1.2s ease-in-out infinite" }}>★</text>
+                  <text x="100" y="55" fill="#FFD700" fontSize="18"
+                    style={{ animation: "estrella2 1.2s ease-in-out infinite" }}>★</text>
+                  <text x="55" y="20" fill="#FFD700" fontSize="13"
+                    style={{ animation: "estrella3 1.4s ease-in-out infinite" }}>★</text>
                 </>
               )}
-
-              {/* Sonrisa: pequeña o grande */}
-              <path
-                d={completo ? "M 55 66 Q 66 78 77 66" : "M 58 66 Q 66 72 74 66"}
-                stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round"
-                style={{ transition: "d 0.4s ease" }}
-              />
-            </g>
-          </svg>
-        </div>
+              <ellipse cx="65" cy="173" rx="22" ry="5" fill="rgba(0,0,0,0.2)"
+                style={completo ? { animation: "sombra 1.4s ease-in-out infinite" } : {}} />
+              <g style={completo ? { animation: "saltar 1.4s ease-in-out infinite" } : {}}>
+                <line x1="58" y1="120" x2="48" y2="155" stroke="#005E2B" strokeWidth="8" strokeLinecap="round"
+                  style={completo ? { animation: "piernaIzqSalto 1.4s ease-in-out infinite", transformOrigin: "58px 120px" } : { transformOrigin: "58px 120px", transform: "rotate(0deg)" }} />
+                <line x1="74" y1="120" x2="84" y2="155" stroke="#005E2B" strokeWidth="8" strokeLinecap="round"
+                  style={completo ? { animation: "piernaDerSalto 1.4s ease-in-out infinite", transformOrigin: "74px 120px" } : { transformOrigin: "74px 120px", transform: "rotate(0deg)" }} />
+                <rect x="48" y="85" width="36" height="38" rx="6" fill="#007B3E" />
+                <polygon points="66,90 62,107 66,104 70,107" fill="#FFD700" />
+                <line x1="48" y1="92" x2="28" y2={completo ? "68" : "110"} stroke="#F5CBA7" strokeWidth="7" strokeLinecap="round"
+                  style={completo ? { animation: "brazoIzqSalto 1.4s ease-in-out infinite", transformOrigin: "48px 92px" } : { transition: "all 0.4s ease" }} />
+                <line x1="84" y1="92" x2="104" y2={completo ? "68" : "110"} stroke="#F5CBA7" strokeWidth="7" strokeLinecap="round"
+                  style={completo ? { animation: "brazoDerSalto 1.4s ease-in-out infinite", transformOrigin: "84px 92px" } : { transition: "all 0.4s ease" }} />
+                {!completo && (
+                  <g>
+                    <rect x="106" y="108" width="18" height="14" rx="3" fill="#8B6914" stroke="#5C4A1E" strokeWidth="1.5" />
+                    <path d="M 109 108 Q 109 104 115 104 Q 121 104 121 108" stroke="#5C4A1E" strokeWidth="1.5" fill="none" />
+                  </g>
+                )}
+                <rect x="61" y="72" width="10" height="15" rx="3" fill="#F5CBA7" />
+                <circle cx="66" cy="57" r="22" fill="#F5CBA7" />
+                <rect x="44" y="35" width="44" height="14" rx="7" fill="#4A2C0A" />
+                {completo ? (
+                  <>
+                    <path d="M 57 52 Q 60 47 63 52" stroke="#333" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+                    <path d="M 69 52 Q 72 47 75 52" stroke="#333" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+                  </>
+                ) : (
+                  <>
+                    <circle cx="60" cy="54" r="3" fill="#333" />
+                    <circle cx="72" cy="54" r="3" fill="#333" />
+                  </>
+                )}
+                <path
+                  d={completo ? "M 55 66 Q 66 78 77 66" : "M 58 66 Q 66 72 74 66"}
+                  stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round"
+                  style={{ transition: "d 0.4s ease" }} />
+              </g>
+            </svg>
+          </div>
+        )}
 
         <h2 style={{
-          color: "white", fontSize: completo ? "22px" : "20px", fontWeight: "700",
-          textAlign: "center", marginBottom: "10px",
+          color: "white",
+          fontSize: isMobile ? "18px" : (completo ? "22px" : "20px"), // 👈
+          fontWeight: "700", textAlign: "center", marginBottom: "8px",
           transition: "font-size 0.3s ease",
           animation: completo ? "pulsoTexto 1.4s ease-in-out infinite" : "none"
         }}>
           {completo ? "¡Todo listo, profe! 🎉" : "¡Crea tu cuenta!"}
         </h2>
 
-        <p style={{
-          color: "rgba(255,255,255,0.75)", fontSize: "14px", textAlign: "center",
-          lineHeight: "1.7", maxWidth: "260px"
-        }}>
-          {completo
-            ? "Ya puedes crear tu cuenta y empezar a explorar."
-            : "Regístrate para explorar escenarios educativos y tomar decisiones que impactan el aula."}
-        </p>
+        {/* Descripción — más corta en móvil */}
+        {!isMobile && (
+          <p style={{
+            color: "rgba(255,255,255,0.75)", fontSize: "14px", textAlign: "center",
+            lineHeight: "1.7", maxWidth: "260px"
+          }}>
+            {completo
+              ? "Ya puedes crear tu cuenta y empezar a explorar."
+              : "Regístrate para explorar escenarios educativos y tomar decisiones que impactan el aula."}
+          </p>
+        )}
 
-        <img src={LogoUdec} alt="UDEC" style={{ width: "160px", marginTop: "40px", opacity: 0.7 }} />
+        <img src={LogoUdec} alt="UDEC" style={{ width: isMobile ? "120px" : "160px", marginTop: isMobile ? "16px" : "40px", opacity: 0.7 }} />
       </div>
 
       {/* PANEL DERECHO — blanco */}
       <div style={{
-        width: "55%", backgroundColor: "#FFFFFF", display: "flex", flexDirection: "column",
-        alignItems: "center", justifyContent: "center", padding: "40px 70px",
-        animation: "slideInRight 0.6s ease forwards", overflowY: "auto"
+        width: isMobile ? "100%" : "55%", // 👈
+        backgroundColor: "#FFFFFF",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        padding: isMobile ? "30px 20px" : "40px 70px", // 👈
+        animation: "slideInRight 0.6s ease forwards",
+        overflowY: "auto"
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "32px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
             <circle cx="16" cy="10" r="6" fill="#00482B" />
             <path d="M4 28c0-6.627 5.373-12 12-12s12 5.373 12 12"
               stroke="#00482B" strokeWidth="2.5" fill="none" strokeLinecap="round" />
           </svg>
-          <h2 style={{ color: "#00482B", fontWeight: "700", margin: 0, fontSize: "22px" }}>Registrarme</h2>
+          <h2 style={{ color: "#00482B", fontWeight: "700", margin: 0, fontSize: isMobile ? "18px" : "22px" }}>Registrarme</h2>
         </div>
 
         <form onSubmit={handleSubmit} style={{
-          display: "grid", gridTemplateColumns: "1fr 1fr",
-          gap: "18px", width: "100%", maxWidth: "480px"
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", // 👈 1 columna en móvil
+          gap: "16px",
+          width: "100%",
+          maxWidth: isMobile ? "100%" : "480px" // 👈
         }}>
-          <Field label="Nombre">
+          <Field label="Nombre" isMobile={isMobile}>
             <input name="nombre" type="text" placeholder="Tu nombre" onChange={handleChange} />
           </Field>
-          <Field label="Apellido">
+          <Field label="Apellido" isMobile={isMobile}>
             <input name="apellido" type="text" placeholder="Tu apellido" onChange={handleChange} />
           </Field>
-          <Field label="Correo electrónico" full>
+          <Field label="Correo electrónico" full isMobile={isMobile}>
             <input name="correo" type="email" placeholder="tu@correo.com" onChange={handleChange} />
           </Field>
-          <Field label="Contraseña">
+          <Field label="Contraseña" isMobile={isMobile}>
             <input name="contraseña" type="password" placeholder="••••••••" onChange={handleChange} />
           </Field>
-          <Field label="Confirmar contraseña">
+          <Field label="Confirmar contraseña" isMobile={isMobile}>
             <input name="confirmar" type="password" placeholder="••••••••" onChange={handleChange} />
           </Field>
-          <Field label="Años de experiencia">
+          <Field label="Años de experiencia" isMobile={isMobile}>
             <input name="anos_experiencia" type="number" placeholder="0" min="0" onChange={handleChange} />
           </Field>
-          <Field label="Nombre institución">
+          <Field label="Nombre institución" isMobile={isMobile}>
             <input name="nombre_institucion" type="text" placeholder="Ej. Colegio San Juan" onChange={handleChange} />
           </Field>
-          <Field label="Tipo de institución">
+          <Field label="Tipo de institución" isMobile={isMobile}>
             <select name="tipo_institucion" onChange={handleChange}>
               <option value="">Seleccionar...</option>
               <option value="1">Pública</option>
               <option value="2">Privada</option>
             </select>
           </Field>
-          <Field label="Municipio">
+          <Field label="Municipio" full isMobile={isMobile}> {/* 👈 full en móvil para que ocupe todo */}
             <select name="municipio" onChange={handleChange}>
               <option value="">Seleccionar...</option>
               {["Chía","Cajicá","Zipaquirá","Sopó","Cota","Tenjo","Tabio","Tocancipá","Gachancipá","Cogua"]
@@ -285,7 +272,6 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
       <style>{`
         @keyframes slideInLeft  { from{opacity:0;transform:translateX(-30px)} to{opacity:1;transform:translateX(0)} }
         @keyframes slideInRight { from{opacity:0;transform:translateX(30px)}  to{opacity:1;transform:translateX(0)} }
-
         @keyframes saltar {
           0%,100% { transform: translateY(0); }
           40%,60% { transform: translateY(-22px); }
@@ -330,11 +316,11 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
           0%,100% { box-shadow: 0 0 0 0 rgba(0,123,62,0.3); }
           50% { box-shadow: 0 0 0 8px rgba(0,123,62,0); }
         }
-
         input, select {
           padding: 13px 16px; border-radius: 10px; border: 2px solid #E0E0E0;
           font-size: 14px; font-family: Montserrat, sans-serif; outline: none;
           transition: border .3s; width: 100%; background: #fff;
+          box-sizing: border-box;
         }
         input:focus, select:focus { border-color: #007B3E; }
       `}</style>
@@ -342,9 +328,12 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   );
 }
 
-function Field({ label, children, full }) {
+function Field({ label, children, full, isMobile }) {
   return (
-    <div style={{ gridColumn: full ? "1 / -1" : "auto", display: "flex", flexDirection: "column", gap: "7px" }}>
+    <div style={{
+      gridColumn: (full || isMobile) ? "1 / -1" : "auto", // 👈 en móvil todo ocupa ancho completo
+      display: "flex", flexDirection: "column", gap: "7px"
+    }}>
       <label style={{ fontSize: "12px", fontWeight: "600", color: "#555" }}>{label}</label>
       {children}
     </div>

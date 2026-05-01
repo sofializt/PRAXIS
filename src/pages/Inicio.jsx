@@ -164,7 +164,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
         alignItems: "center",
         justifyContent: "space-between",
         padding: isMobile ? "0 20px" : "0 60px", // 👈
-        height: "70px",
+        height: "90px",
         position: "relative",
       }}>
         <img

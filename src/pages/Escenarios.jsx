@@ -9,7 +9,6 @@ const DIMENSIONES = [
   { id: 4, nombre: "Equidad" },
 ];
 
-// 👈 HOOK móvil
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   useEffect(() => {
@@ -31,13 +30,13 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
   const [dimensionSeleccionada, setDimensionSeleccionada] = useState(null);
   const [cambiandoRespuesta, setCambiandoRespuesta] = useState(false);
   const [enviando, setEnviando] = useState(false);
-  const [menuAbierto, setMenuAbierto] = useState(false); // 👈
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   const [cargandoEscenarios, setCargandoEscenarios] = useState(true);
   const [cargandoOpciones, setCargandoOpciones] = useState(false);
   const [errorCarga, setErrorCarga] = useState(false);
 
-  const isMobile = useIsMobile(); // 👈
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     cargarEscenarios();
@@ -221,18 +220,17 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: isMobile ? "0 20px" : "0 60px", // 👈
-        height: isMobile ? "70px" : "100px", // 👈
+        padding: isMobile ? "0 20px" : "0 60px",
+        height: isMobile ? "70px" : "100px", // 👈 100px restaurado en desktop
         position: "relative",
       }}>
         <img
           src={logo}
           alt="ISU"
-          style={{ height: isMobile ? "50px" : "70px", cursor: "pointer" }} // 👈
+          style={{ height: isMobile ? "50px" : "70px", cursor: "pointer" }}
           onClick={volverInicio}
         />
 
-        {/* MENÚ HAMBURGUESA MÓVIL */}
         {isMobile ? (
           <button
             onClick={() => setMenuAbierto(!menuAbierto)}
@@ -241,7 +239,6 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
             {menuAbierto ? "✕" : "☰"}
           </button>
         ) : (
-          // MENÚ DESKTOP
           <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
             {[
               { label: "Inicio", key: "inicio" },
@@ -268,7 +265,6 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
           </div>
         )}
 
-        {/* CERRAR SESIÓN - solo desktop */}
         {!isMobile && (
           <button onClick={cerrarSesion}
             style={{
@@ -325,12 +321,12 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
       )}
 
       {/* BARRA VOLVER A CATEGORÍAS */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: isMobile ? "10px 20px" : "15px 130px" }}> {/* 👈 */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: isMobile ? "10px 20px" : "15px 130px" }}>
         <span
           onClick={() => { setDimensionSeleccionada(null); setIndiceActual(0); setCambiandoRespuesta(false); setEnviando(false); }}
           style={{
             cursor: "pointer", color: "#007B3E", fontWeight: "600",
-            fontSize: isMobile ? "13px" : "15px", // 👈
+            fontSize: isMobile ? "13px" : "15px",
             visibility: dimensionSeleccionada ? "visible" : "hidden"
           }}
         >
@@ -357,14 +353,14 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
           <>
             {/* SELECCIÓN DE DIMENSIÓN */}
             {!dimensionSeleccionada && (
-              <div style={{ padding: isMobile ? "30px 20px" : "40px 80px", textAlign: "center" }}> {/* 👈 */}
-                <h2 style={{ color: "#00482B", marginBottom: "30px", fontSize: isMobile ? "20px" : "24px" }}>Selecciona una categoría</h2>
+              <div style={{ padding: isMobile ? "30px 20px" : "40px 80px", textAlign: "center" }}>
+                <h2 style={{ color: "#00482B", marginBottom: "50px" }}>Selecciona una categoría</h2>
+                {/* 👈 flex con flexWrap — desktop igual que antes, móvil 2x2 automático */}
                 <div style={{
-                  display: "grid",
-                  gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", // 👈 2 columnas en móvil
+                  display: "flex",
                   gap: isMobile ? "16px" : "40px",
-                  maxWidth: "900px",
-                  margin: "0 auto",
+                  justifyContent: "center",
+                  flexWrap: "wrap",
                 }}>
                   {DIMENSIONES.map((dim) => (
                     <div
@@ -372,9 +368,10 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                       onClick={() => { setDimensionSeleccionada(dim.id); setIndiceActual(0); }}
                       style={{
                         backgroundColor: "#007B3E", color: "white",
-                        padding: isMobile ? "30px 10px" : "60px 70px", // 👈
+                        padding: isMobile ? "40px 30px" : "60px 70px", // 👈 original en desktop
                         borderRadius: "18px", cursor: "pointer",
-                        fontWeight: "600", fontSize: isMobile ? "15px" : "20px", // 👈
+                        fontWeight: "600", fontSize: isMobile ? "15px" : "20px",
+                        minWidth: isMobile ? "130px" : "220px", // 👈 original en desktop
                         transition: "all 0.3s", boxShadow: "0 6px 15px rgba(0,0,0,0.15)"
                       }}
                       onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-8px) scale(1.05)"; }}
@@ -393,22 +390,22 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
 
                 <div style={{
                   backgroundColor: "#FBE122", textAlign: "center",
-                  padding: isMobile ? "12px" : "18px", // 👈
-                  fontWeight: "700", fontSize: isMobile ? "16px" : "20px", // 👈
+                  padding: isMobile ? "12px" : "18px",
+                  fontWeight: "700", fontSize: isMobile ? "16px" : "20px",
                   color: "#00482B", boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
                 }}>
                   {DIMENSIONES.find((d) => d.id === dimensionSeleccionada)?.nombre}
                 </div>
 
-                <div style={{ padding: isMobile ? "20px 20px" : "30px 130px", maxWidth: "1000px", margin: "0 auto" }}> {/* 👈 */}
+                <div style={{ padding: isMobile ? "20px 20px" : "30px 130px", maxWidth: "1000px", margin: "0 auto" }}>
                   <h2 style={{ color: "#00482B", textAlign: "center", fontSize: isMobile ? "18px" : "24px" }}>{escenario.titulo}</h2>
                   <div style={{ backgroundColor: "#F5F5F5", borderRadius: "14px", padding: "20px", marginTop: "20px" }}>
-                    <p style={{ lineHeight: "1.7", fontSize: isMobile ? "14px" : "16px", margin: 0 }}> {/* 👈 */}
+                    <p style={{ lineHeight: "1.7", fontSize: isMobile ? "14px" : "16px", margin: 0 }}>
                       <strong style={{ color: "#007B3E" }}>Situación: </strong>
                       {escenario.descripcion}
                     </p>
                   </div>
-                  <p style={{ textAlign: "center", fontWeight: "600", marginTop: "20px", color: "#00482B", fontSize: isMobile ? "14px" : "16px" }}> {/* 👈 */}
+                  <p style={{ textAlign: "center", fontWeight: "600", marginTop: "20px", color: "#00482B", fontSize: isMobile ? "14px" : "16px" }}>
                     {escenario.pregunta}
                   </p>
                 </div>
@@ -418,9 +415,9 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                 ) : (
                   <div style={{
                     display: "grid",
-                    gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", // 👈 1 columna en móvil
+                    gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
                     gap: isMobile ? "20px" : "30px",
-                    padding: isMobile ? "0 16px" : "0 130px", // 👈
+                    padding: isMobile ? "0 16px" : "0 130px",
                     maxWidth: "1000px",
                     margin: "0 auto"
                   }}>
@@ -447,7 +444,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                           <img
                             src={`https://backend-isu.onrender.com/uploads/${opcion.imagen}`}
                             alt=""
-                            style={{ width: "100%", height: isMobile ? "180px" : "230px", objectFit: "cover" }} // 👈
+                            style={{ width: "100%", height: isMobile ? "180px" : "230px", objectFit: "cover" }}
                           />
                           {esElegida && (
                             <div style={{
@@ -495,16 +492,15 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                   </div>
                 )}
 
-                {/* FLECHAS NAVEGACIÓN - más pequeñas en móvil */}
                 <div style={{
                   position: "fixed", top: "50%", left: "0", right: "0",
                   display: "flex", justifyContent: "space-between",
-                  padding: isMobile ? "0 8px" : "0 40px", // 👈
+                  padding: isMobile ? "0 8px" : "0 40px",
                   transform: "translateY(-50%)", pointerEvents: "none"
                 }}>
                   <span onClick={anteriorEscenario}
                     style={{
-                      fontSize: isMobile ? "40px" : "70px", // 👈
+                      fontSize: isMobile ? "40px" : "70px",
                       cursor: hayAnterior ? "pointer" : "default",
                       color: hayAnterior ? "#007B3E" : "#ccc",
                       pointerEvents: "auto", transition: "0.3s", userSelect: "none"
@@ -514,7 +510,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                   >←</span>
                   <span onClick={siguienteEscenario}
                     style={{
-                      fontSize: isMobile ? "40px" : "70px", // 👈
+                      fontSize: isMobile ? "40px" : "70px",
                       cursor: haySiguiente ? "pointer" : "default",
                       color: haySiguiente ? "#007B3E" : "#ccc",
                       pointerEvents: "auto", transition: "0.3s", userSelect: "none"
@@ -538,12 +534,12 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
       {/* FOOTER */}
       <footer style={{
         backgroundColor: "#00482B", color: "white",
-        padding: isMobile ? "20px" : "30px 130px", // 👈
+        padding: isMobile ? "20px" : "30px 130px",
         marginTop: "80px"
       }}>
         <div style={{
           display: "flex",
-          flexDirection: isMobile ? "column" : "row", // 👈
+          flexDirection: isMobile ? "column" : "row",
           justifyContent: "space-between",
           alignItems: "center",
           gap: isMobile ? "16px" : "0",

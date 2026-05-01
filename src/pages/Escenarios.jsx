@@ -9,6 +9,17 @@ const DIMENSIONES = [
   { id: 4, nombre: "Equidad" },
 ];
 
+// 👈 HOOK móvil
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return isMobile;
+};
+
 export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) {
   const [escenarios, setEscenarios] = useState([]);
   const [indiceActual, setIndiceActual] = useState(0);
@@ -19,11 +30,14 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
   const [misRespuestas, setMisRespuestas] = useState([]);
   const [dimensionSeleccionada, setDimensionSeleccionada] = useState(null);
   const [cambiandoRespuesta, setCambiandoRespuesta] = useState(false);
-  const [enviando, setEnviando] = useState(false); // 👈 NUEVO: evita doble petición
+  const [enviando, setEnviando] = useState(false);
+  const [menuAbierto, setMenuAbierto] = useState(false); // 👈
 
   const [cargandoEscenarios, setCargandoEscenarios] = useState(true);
   const [cargandoOpciones, setCargandoOpciones] = useState(false);
   const [errorCarga, setErrorCarga] = useState(false);
+
+  const isMobile = useIsMobile(); // 👈
 
   useEffect(() => {
     cargarEscenarios();
@@ -103,9 +117,8 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
   };
 
   const seleccionar = async (idOpcion) => {
-    if ((yaRespondio && !cambiandoRespuesta) || enviando) return; // 👈 bloquea doble click
-    
-    setEnviando(true); // 👈 bloquea inmediatamente
+    if ((yaRespondio && !cambiandoRespuesta) || enviando) return;
+    setEnviando(true);
 
     const escenario = escenariosFiltrados[indiceActual];
     const id_usuario_raw = localStorage.getItem("id_usuario");
@@ -139,7 +152,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
     } catch (error) {
       console.error(error);
     } finally {
-      setEnviando(false); // 👈 siempre desbloquea al terminar
+      setEnviando(false);
     }
   };
 
@@ -151,11 +164,8 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
   };
 
   const volverInicio = () => {
-    if (onVolverInicio) {
-      onVolverInicio();
-    } else {
-      cerrarSesion();
-    }
+    if (onVolverInicio) onVolverInicio();
+    else cerrarSesion();
   };
 
   const escenariosFiltrados = dimensionSeleccionada
@@ -169,29 +179,24 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
 
   const siguienteEscenario = () => {
     setCambiandoRespuesta(false);
-    setEnviando(false); // 👈
+    setEnviando(false);
     if (indiceActual < escenariosFiltrados.length - 1) {
       setIndiceActual(indiceActual + 1);
     } else {
       const siguienteDimension = DIMENSIONES[indiceDimension + 1];
-      if (siguienteDimension) {
-        setDimensionSeleccionada(siguienteDimension.id);
-        setIndiceActual(0);
-      }
+      if (siguienteDimension) { setDimensionSeleccionada(siguienteDimension.id); setIndiceActual(0); }
     }
   };
 
   const anteriorEscenario = () => {
     setCambiandoRespuesta(false);
-    setEnviando(false); // 👈
+    setEnviando(false);
     if (indiceActual > 0) {
       setIndiceActual(indiceActual - 1);
     } else {
       const dimensionAnterior = DIMENSIONES[indiceDimension - 1];
       if (dimensionAnterior) {
-        const escenariosDimAnterior = escenarios.filter(
-          (e) => e.id_dimension === dimensionAnterior.id
-        );
+        const escenariosDimAnterior = escenarios.filter((e) => e.id_dimension === dimensionAnterior.id);
         setDimensionSeleccionada(dimensionAnterior.id);
         setIndiceActual(escenariosDimAnterior.length - 1);
       }
@@ -216,79 +221,116 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 60px",
-        height: "100px",
+        padding: isMobile ? "0 20px" : "0 60px", // 👈
+        height: isMobile ? "70px" : "100px", // 👈
+        position: "relative",
       }}>
         <img
           src={logo}
           alt="ISU"
-          style={{ height: "70px", cursor: "pointer" }}
+          style={{ height: isMobile ? "50px" : "70px", cursor: "pointer" }} // 👈
           onClick={volverInicio}
         />
 
-        <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
+        {/* MENÚ HAMBURGUESA MÓVIL */}
+        {isMobile ? (
+          <button
+            onClick={() => setMenuAbierto(!menuAbierto)}
+            style={{ background: "none", border: "none", cursor: "pointer", color: "white", fontSize: "28px" }}
+          >
+            {menuAbierto ? "✕" : "☰"}
+          </button>
+        ) : (
+          // MENÚ DESKTOP
+          <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
+            {[
+              { label: "Inicio", key: "inicio" },
+              { label: "¿Qué hacemos?", key: "que" },
+              { label: "Juzga", key: "juzga" },
+            ].map(({ label, key }) => (
+              <span key={key}
+                onClick={() => {
+                  if (key === "juzga") return;
+                  if (key === "inicio" || key === "que") { volverInicio(); return; }
+                }}
+                style={{
+                  color: "white", fontWeight: "600", fontSize: "16px", cursor: "pointer",
+                  borderBottom: key === "juzga" ? "2px solid white" : "2px solid transparent",
+                }}>
+                {label}
+              </span>
+            ))}
+            <span
+              onClick={() => window.open("https://forms.cloud.microsoft/r/iBJ4fHqZdq", "_blank")}
+              style={{ color: "white", fontWeight: "600", fontSize: "16px", cursor: "pointer" }}>
+              Proponer escenario
+            </span>
+          </div>
+        )}
+
+        {/* CERRAR SESIÓN - solo desktop */}
+        {!isMobile && (
+          <button onClick={cerrarSesion}
+            style={{
+              backgroundColor: "white", color: "#00482B", border: "none",
+              borderRadius: "30px", padding: "12px 28px", fontWeight: "700",
+              fontSize: "15px", cursor: "pointer", transition: "all 0.3s",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+              visibility: esDocente ? "visible" : "hidden"
+            }}
+            onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
+            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+          >
+            CERRAR SESIÓN
+          </button>
+        )}
+      </nav>
+
+      {/* MENÚ DESPLEGABLE MÓVIL */}
+      {isMobile && menuAbierto && (
+        <div style={{
+          backgroundColor: "#00612F", display: "flex", flexDirection: "column",
+          padding: "16px 24px", gap: "16px", zIndex: 100,
+        }}>
           {[
             { label: "Inicio", key: "inicio" },
             { label: "¿Qué hacemos?", key: "que" },
-            { label: "Juzga", key: "juzga" },
+            { label: "Proponer escenario", key: "proponer" },
           ].map(({ label, key }) => (
-            <span
-              key={key}
+            <span key={key}
               onClick={() => {
-                if (key === "juzga") return;
-                if (key === "inicio" || key === "que") { volverInicio(); return; }
+                setMenuAbierto(false);
+                if (key === "proponer") { window.open("https://forms.cloud.microsoft/r/iBJ4fHqZdq", "_blank"); return; }
+                volverInicio();
               }}
               style={{
-                color: "white",
-                fontWeight: "600",
-                fontSize: "16px",
-                cursor: "pointer",
-                borderBottom: key === "juzga" ? "2px solid white" : "2px solid transparent",
-              }}
-            >
+                color: "white", fontWeight: "600", fontSize: "16px",
+                cursor: "pointer", paddingBottom: "8px",
+                borderBottom: "1px solid rgba(255,255,255,0.2)",
+              }}>
               {label}
             </span>
           ))}
-
-          <span
-            onClick={() => window.open("https://forms.cloud.microsoft/r/iBJ4fHqZdq", "_blank")}
-            style={{ color: "white", fontWeight: "600", fontSize: "16px", cursor: "pointer" }}
-          >
-            Proponer escenario
-          </span>
+          {esDocente && (
+            <button onClick={() => { setMenuAbierto(false); cerrarSesion(); }}
+              style={{
+                backgroundColor: "white", color: "#00482B", border: "none",
+                borderRadius: "30px", padding: "12px", fontWeight: "700",
+                fontSize: "15px", cursor: "pointer",
+              }}>
+              CERRAR SESIÓN
+            </button>
+          )}
         </div>
-
-        <button
-          onClick={cerrarSesion}
-          style={{
-            backgroundColor: "white",
-            color: "#00482B",
-            border: "none",
-            borderRadius: "30px",
-            padding: "12px 28px",
-            fontWeight: "700",
-            fontSize: "15px",
-            cursor: "pointer",
-            transition: "all 0.3s",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-            visibility: esDocente ? "visible" : "hidden"
-          }}
-          onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
-          onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-        >
-          CERRAR SESIÓN
-        </button>
-      </nav>
+      )}
 
       {/* BARRA VOLVER A CATEGORÍAS */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px 130px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: isMobile ? "10px 20px" : "15px 130px" }}> {/* 👈 */}
         <span
           onClick={() => { setDimensionSeleccionada(null); setIndiceActual(0); setCambiandoRespuesta(false); setEnviando(false); }}
           style={{
-            cursor: "pointer",
-            color: "#007B3E",
-            fontWeight: "600",
-            fontSize: "15px",
+            cursor: "pointer", color: "#007B3E", fontWeight: "600",
+            fontSize: isMobile ? "13px" : "15px", // 👈
             visibility: dimensionSeleccionada ? "visible" : "hidden"
           }}
         >
@@ -299,19 +341,13 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
       {/* CONTENIDO PRINCIPAL */}
       <div style={{ flex: 1 }}>
 
-        {cargandoEscenarios && (
-          <Spinner mensaje="Cargando escenarios... esto puede tardar unos segundos" />
-        )}
+        {cargandoEscenarios && <Spinner mensaje="Cargando escenarios... esto puede tardar unos segundos" />}
 
         {!cargandoEscenarios && errorCarga && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "100px 0", gap: "16px" }}>
-            <p style={{ color: "#cc0000", fontWeight: "600", fontSize: "16px" }}>
-              ⚠ No se pudo conectar al servidor. Intenta de nuevo.
-            </p>
-            <button
-              onClick={cargarEscenarios}
-              style={{ backgroundColor: "#007B3E", color: "white", border: "none", borderRadius: "25px", padding: "12px 28px", fontWeight: "700", cursor: "pointer", fontSize: "15px" }}
-            >
+            <p style={{ color: "#cc0000", fontWeight: "600", fontSize: "16px" }}>⚠ No se pudo conectar al servidor. Intenta de nuevo.</p>
+            <button onClick={cargarEscenarios}
+              style={{ backgroundColor: "#007B3E", color: "white", border: "none", borderRadius: "25px", padding: "12px 28px", fontWeight: "700", cursor: "pointer", fontSize: "15px" }}>
               Reintentar
             </button>
           </div>
@@ -319,20 +355,27 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
 
         {!cargandoEscenarios && !errorCarga && (
           <>
+            {/* SELECCIÓN DE DIMENSIÓN */}
             {!dimensionSeleccionada && (
-              <div style={{ padding: "40px 80px", textAlign: "center" }}>
-                <h2 style={{ color: "#00482B", marginBottom: "50px" }}>Selecciona una categoría</h2>
-                <div style={{ display: "flex", gap: "40px", justifyContent: "center", flexWrap: "wrap" }}>
+              <div style={{ padding: isMobile ? "30px 20px" : "40px 80px", textAlign: "center" }}> {/* 👈 */}
+                <h2 style={{ color: "#00482B", marginBottom: "30px", fontSize: isMobile ? "20px" : "24px" }}>Selecciona una categoría</h2>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", // 👈 2 columnas en móvil
+                  gap: isMobile ? "16px" : "40px",
+                  maxWidth: "900px",
+                  margin: "0 auto",
+                }}>
                   {DIMENSIONES.map((dim) => (
                     <div
                       key={dim.id}
                       onClick={() => { setDimensionSeleccionada(dim.id); setIndiceActual(0); }}
                       style={{
                         backgroundColor: "#007B3E", color: "white",
-                        padding: "60px 70px", borderRadius: "18px",
-                        cursor: "pointer", fontWeight: "600", fontSize: "20px",
-                        minWidth: "220px", transition: "all 0.3s",
-                        boxShadow: "0 6px 15px rgba(0,0,0,0.15)"
+                        padding: isMobile ? "30px 10px" : "60px 70px", // 👈
+                        borderRadius: "18px", cursor: "pointer",
+                        fontWeight: "600", fontSize: isMobile ? "15px" : "20px", // 👈
+                        transition: "all 0.3s", boxShadow: "0 6px 15px rgba(0,0,0,0.15)"
                       }}
                       onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-8px) scale(1.05)"; }}
                       onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0) scale(1)"; }}
@@ -344,26 +387,28 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
               </div>
             )}
 
+            {/* ESCENARIO */}
             {dimensionSeleccionada && escenario && (
               <div style={{ animation: "fadeIn 0.5s ease" }}>
 
                 <div style={{
                   backgroundColor: "#FBE122", textAlign: "center",
-                  padding: "18px", fontWeight: "700", fontSize: "20px",
+                  padding: isMobile ? "12px" : "18px", // 👈
+                  fontWeight: "700", fontSize: isMobile ? "16px" : "20px", // 👈
                   color: "#00482B", boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
                 }}>
                   {DIMENSIONES.find((d) => d.id === dimensionSeleccionada)?.nombre}
                 </div>
 
-                <div style={{ padding: "30px 130px", maxWidth: "1000px", margin: "0 auto" }}>
-                  <h2 style={{ color: "#00482B", textAlign: "center" }}>{escenario.titulo}</h2>
+                <div style={{ padding: isMobile ? "20px 20px" : "30px 130px", maxWidth: "1000px", margin: "0 auto" }}> {/* 👈 */}
+                  <h2 style={{ color: "#00482B", textAlign: "center", fontSize: isMobile ? "18px" : "24px" }}>{escenario.titulo}</h2>
                   <div style={{ backgroundColor: "#F5F5F5", borderRadius: "14px", padding: "20px", marginTop: "20px" }}>
-                    <p style={{ lineHeight: "1.7" }}>
+                    <p style={{ lineHeight: "1.7", fontSize: isMobile ? "14px" : "16px", margin: 0 }}> {/* 👈 */}
                       <strong style={{ color: "#007B3E" }}>Situación: </strong>
                       {escenario.descripcion}
                     </p>
                   </div>
-                  <p style={{ textAlign: "center", fontWeight: "600", marginTop: "20px", color: "#00482B" }}>
+                  <p style={{ textAlign: "center", fontWeight: "600", marginTop: "20px", color: "#00482B", fontSize: isMobile ? "14px" : "16px" }}> {/* 👈 */}
                     {escenario.pregunta}
                   </p>
                 </div>
@@ -371,7 +416,14 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                 {cargandoOpciones ? (
                   <Spinner mensaje="Cargando opciones..." />
                 ) : (
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "30px", padding: "0 130px", maxWidth: "1000px", margin: "0 auto" }}>
+                  <div style={{
+                    display: "grid",
+                    gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", // 👈 1 columna en móvil
+                    gap: isMobile ? "20px" : "30px",
+                    padding: isMobile ? "0 16px" : "0 130px", // 👈
+                    maxWidth: "1000px",
+                    margin: "0 auto"
+                  }}>
                     {opciones.map((opcion) => {
                       const esElegida = selectedOption === opcion.id_opcion;
                       const esNoElegida = yaRespondio && !esElegida;
@@ -381,50 +433,37 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                           key={opcion.id_opcion}
                           onClick={() => seleccionar(opcion.id_opcion)}
                           style={{
-                            backgroundColor: "white",
-                            borderRadius: "16px",
-                            overflow: "hidden",
+                            backgroundColor: "white", borderRadius: "16px", overflow: "hidden",
                             border: esElegida ? "4px solid #007B3E" : "4px solid transparent",
-                            cursor: (yaRespondio && !cambiandoRespuesta) ? "default" : "pointer", // 👈
-                            transition: "all 0.4s",
-                            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                            cursor: (yaRespondio && !cambiandoRespuesta) ? "default" : "pointer",
+                            transition: "all 0.4s", boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
                             opacity: esNoElegida ? 0.35 : 1,
                             filter: esNoElegida ? "grayscale(60%)" : "none",
                             position: "relative",
                           }}
-                          onMouseEnter={(e) => { if (!yaRespondio || cambiandoRespuesta) e.currentTarget.style.transform = "translateY(-6px) scale(1.02)"; }} // 👈
+                          onMouseEnter={(e) => { if (!yaRespondio || cambiandoRespuesta) e.currentTarget.style.transform = "translateY(-6px) scale(1.02)"; }}
                           onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0) scale(1)"; }}
                         >
                           <img
                             src={`https://backend-isu.onrender.com/uploads/${opcion.imagen}`}
                             alt=""
-                            style={{ width: "100%", height: "230px", objectFit: "cover" }}
+                            style={{ width: "100%", height: isMobile ? "180px" : "230px", objectFit: "cover" }} // 👈
                           />
-
                           {esElegida && (
                             <div style={{
-                              position: "absolute",
-                              top: "16px",
-                              right: "16px",
-                              backgroundColor: "#007B3E",
-                              color: "white",
-                              fontWeight: "800",
-                              fontSize: "13px",
-                              padding: "6px 14px",
-                              borderRadius: "6px",
-                              letterSpacing: "2px",
-                              textTransform: "uppercase",
-                              border: "2px solid white",
-                              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                              position: "absolute", top: "16px", right: "16px",
+                              backgroundColor: "#007B3E", color: "white", fontWeight: "800",
+                              fontSize: "13px", padding: "6px 14px", borderRadius: "6px",
+                              letterSpacing: "2px", textTransform: "uppercase",
+                              border: "2px solid white", boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
                               animation: "sellazo 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards",
                               transformOrigin: "center",
                             }}>
                               ✔ Elegido
                             </div>
                           )}
-
                           <div style={{ padding: "18px" }}>
-                            <p style={{ margin: 0 }}>{opcion.descripcion}</p>
+                            <p style={{ margin: 0, fontSize: isMobile ? "14px" : "16px" }}>{opcion.descripcion}</p>
                           </div>
                         </div>
                       );
@@ -440,18 +479,13 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                         setYaRespondio(false);
                         setSelectedOption(null);
                         setRespuestaTexto("");
-                        setEnviando(false); // 👈
+                        setEnviando(false);
                       }}
                       style={{
-                        backgroundColor: "white",
-                        color: "#007B3E",
-                        border: "2px solid #007B3E",
-                        borderRadius: "30px",
-                        padding: "10px 28px",
-                        fontWeight: "700",
-                        fontSize: "14px",
-                        cursor: "pointer",
-                        transition: "all 0.3s",
+                        backgroundColor: "white", color: "#007B3E",
+                        border: "2px solid #007B3E", borderRadius: "30px",
+                        padding: "10px 28px", fontWeight: "700", fontSize: "14px",
+                        cursor: "pointer", transition: "all 0.3s",
                       }}
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#DFF5EA"}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "white"}
@@ -461,29 +495,29 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                   </div>
                 )}
 
-                <div style={{ position: "fixed", top: "50%", left: "0", right: "0", display: "flex", justifyContent: "space-between", padding: "0 40px", transform: "translateY(-50%)", pointerEvents: "none" }}>
-                  <span
-                    onClick={anteriorEscenario}
+                {/* FLECHAS NAVEGACIÓN - más pequeñas en móvil */}
+                <div style={{
+                  position: "fixed", top: "50%", left: "0", right: "0",
+                  display: "flex", justifyContent: "space-between",
+                  padding: isMobile ? "0 8px" : "0 40px", // 👈
+                  transform: "translateY(-50%)", pointerEvents: "none"
+                }}>
+                  <span onClick={anteriorEscenario}
                     style={{
-                      fontSize: "70px",
+                      fontSize: isMobile ? "40px" : "70px", // 👈
                       cursor: hayAnterior ? "pointer" : "default",
                       color: hayAnterior ? "#007B3E" : "#ccc",
-                      pointerEvents: "auto",
-                      transition: "0.3s",
-                      userSelect: "none"
+                      pointerEvents: "auto", transition: "0.3s", userSelect: "none"
                     }}
                     onMouseEnter={(e) => { if (hayAnterior) e.target.style.transform = "scale(1.2)"; }}
                     onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
                   >←</span>
-                  <span
-                    onClick={siguienteEscenario}
+                  <span onClick={siguienteEscenario}
                     style={{
-                      fontSize: "70px",
+                      fontSize: isMobile ? "40px" : "70px", // 👈
                       cursor: haySiguiente ? "pointer" : "default",
                       color: haySiguiente ? "#007B3E" : "#ccc",
-                      pointerEvents: "auto",
-                      transition: "0.3s",
-                      userSelect: "none"
+                      pointerEvents: "auto", transition: "0.3s", userSelect: "none"
                     }}
                     onMouseEnter={(e) => { if (haySiguiente) e.target.style.transform = "scale(1.2)"; }}
                     onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
@@ -493,7 +527,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
             )}
 
             {dimensionSeleccionada && !escenario && (
-              <div style={{ textAlign: "center", padding: "80px", color: "#007B3E" }}>
+              <div style={{ textAlign: "center", padding: "80px 20px", color: "#007B3E" }}>
                 <p style={{ fontWeight: "600", fontSize: "18px" }}>No hay escenarios disponibles en esta categoría por ahora.</p>
               </div>
             )}
@@ -502,17 +536,29 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
       </div>
 
       {/* FOOTER */}
-      <footer style={{ backgroundColor: "#00482B", color: "white", padding: "30px 130px", marginTop: "80px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <img src={LogoUdec} alt="UDEC" style={{ width: "250px" }} />
-          <div style={{ textAlign: "right", fontSize: "12px", lineHeight: "1.8" }}>
+      <footer style={{
+        backgroundColor: "#00482B", color: "white",
+        padding: isMobile ? "20px" : "30px 130px", // 👈
+        marginTop: "80px"
+      }}>
+        <div style={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row", // 👈
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: isMobile ? "16px" : "0",
+          textAlign: isMobile ? "center" : "right",
+        }}>
+          <img src={LogoUdec} alt="UDEC" style={{ width: isMobile ? "160px" : "250px" }} />
+          <div style={{ fontSize: "12px", lineHeight: "1.8" }}>
             <p>
               <a href="https://praxis-eight-kappa.vercel.app/" style={{ color: "white", fontWeight: "700" }} target="_blank" rel="noreferrer">Praxis</a>{" "}© 2026 by{" "}
               <a href="https://www.researchgate.net/profile/Hugo-Rozo-Garcia" style={{ color: "white", fontWeight: "700" }} target="_blank" rel="noreferrer">Hugo Rozo</a>
             </p>
             <p>Universidad de Cundinamarca</p>
             <p style={{ marginTop: "4px" }}>
-              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer" style={{ color: "white", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noreferrer"
+                style={{ color: "white", display: "inline-flex", alignItems: "center", gap: "4px", justifyContent: "center" }}>
                 CC BY-NC-SA 4.0
                 <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="CC" style={{ width: "16px", filter: "invert(1)" }} />
                 <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="BY" style={{ width: "16px", filter: "invert(1)" }} />

@@ -14,10 +14,11 @@ export default function App() {
   );
 
   const [pantalla, setPantalla] = useState(
-    // Si ya hay sesión de docente, arranca en escenarios
     JSON.parse(localStorage.getItem("usuario"))?.id_rol !== 4 &&
     localStorage.getItem("usuario") ? "escenarios" : "inicio"
   );
+
+  const [cargandoAnonimo, setCargandoAnonimo] = useState(false);
 
   if (window.location.pathname === "/admin") {
     if (usuario?.id_rol === 2) return <PanelAdministrador usuario={usuario} />;
@@ -31,12 +32,13 @@ export default function App() {
   };
 
   const crearAnonimo = async () => {
+    setCargandoAnonimo(true);
     localStorage.clear();
     for (let intento = 1; intento <= 3; intento++) {
       try {
         const res = await fetch("https://backend-isu.onrender.com/api/anonimo", {
           method: "POST",
-          signal: AbortSignal.timeout(8000)
+          signal: AbortSignal.timeout(15000)
         });
         const data = await res.json();
         if (data.usuario) {
@@ -45,17 +47,19 @@ export default function App() {
           localStorage.setItem("id_rol", data.usuario.id_rol);
           setUsuario(data.usuario);
           setPantalla("escenarios");
+          setCargandoAnonimo(false);
           return;
         }
       } catch (error) {
         console.warn(`Intento ${intento} fallido:`, error);
-        if (intento < 3) await new Promise(r => setTimeout(r, 1500));
+        if (intento < 3) await new Promise(r => setTimeout(r, 2000));
       }
     }
     const anonimo = { id_usuario: null, id_rol: 4, nombre: "Anónimo" };
     localStorage.setItem("usuario", JSON.stringify(anonimo));
     setUsuario(anonimo);
     setPantalla("escenarios");
+    setCargandoAnonimo(false);
   };
 
   if (usuario?.id_rol === 2) return <PanelAdministrador usuario={usuario} />;
@@ -64,7 +68,7 @@ export default function App() {
     return (
       <Escenarios
         onCerrarSesion={cerrarSesion}
-        onVolverInicio={() => setPantalla("inicio")}  // ← para volver al inicio
+        onVolverInicio={() => setPantalla("inicio")}
         usuario={usuario}
       />
     );
@@ -75,7 +79,8 @@ export default function App() {
       <Inicio
         onSoyProfesor={() => setPantalla("login")}
         onJuzga={crearAnonimo}
-        usuario={usuario}  // ← aquí llega el usuario docente
+        usuario={usuario}
+        cargandoAnonimo={cargandoAnonimo}
       />
     );
   }

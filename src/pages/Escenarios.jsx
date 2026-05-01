@@ -31,7 +31,6 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
   const [cambiandoRespuesta, setCambiandoRespuesta] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
-
   const [cargandoEscenarios, setCargandoEscenarios] = useState(true);
   const [cargandoOpciones, setCargandoOpciones] = useState(false);
   const [errorCarga, setErrorCarga] = useState(false);
@@ -221,7 +220,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
         alignItems: "center",
         justifyContent: "space-between",
         padding: isMobile ? "0 20px" : "0 60px",
-        height: isMobile ? "70px" : "100px", // 👈 100px restaurado en desktop
+        height: isMobile ? "70px" : "100px",
         position: "relative",
       }}>
         <img
@@ -248,7 +247,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
               <span key={key}
                 onClick={() => {
                   if (key === "juzga") return;
-                  if (key === "inicio" || key === "que") { volverInicio(); return; }
+                  volverInicio();
                 }}
                 style={{
                   color: "white", fontWeight: "600", fontSize: "16px", cursor: "pointer",
@@ -351,11 +350,9 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
 
         {!cargandoEscenarios && !errorCarga && (
           <>
-            {/* SELECCIÓN DE DIMENSIÓN */}
             {!dimensionSeleccionada && (
               <div style={{ padding: isMobile ? "30px 20px" : "40px 80px", textAlign: "center" }}>
                 <h2 style={{ color: "#00482B", marginBottom: "50px" }}>Selecciona una categoría</h2>
-                {/* 👈 flex con flexWrap — desktop igual que antes, móvil 2x2 automático */}
                 <div style={{
                   display: "flex",
                   gap: isMobile ? "16px" : "40px",
@@ -368,10 +365,10 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                       onClick={() => { setDimensionSeleccionada(dim.id); setIndiceActual(0); }}
                       style={{
                         backgroundColor: "#007B3E", color: "white",
-                        padding: isMobile ? "40px 30px" : "60px 70px", // 👈 original en desktop
+                        padding: isMobile ? "40px 30px" : "60px 70px",
                         borderRadius: "18px", cursor: "pointer",
                         fontWeight: "600", fontSize: isMobile ? "15px" : "20px",
-                        minWidth: isMobile ? "130px" : "220px", // 👈 original en desktop
+                        minWidth: isMobile ? "130px" : "220px",
                         transition: "all 0.3s", boxShadow: "0 6px 15px rgba(0,0,0,0.15)"
                       }}
                       onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-8px) scale(1.05)"; }}
@@ -384,10 +381,8 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
               </div>
             )}
 
-            {/* ESCENARIO */}
             {dimensionSeleccionada && escenario && (
               <div style={{ animation: "fadeIn 0.5s ease" }}>
-
                 <div style={{
                   backgroundColor: "#FBE122", textAlign: "center",
                   padding: isMobile ? "12px" : "18px",

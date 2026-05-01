@@ -3,7 +3,6 @@ import logo from "../assets/praxis.svg";
 import LogoUdec from "../assets/udecblanco.png";
 import qr from "../assets/qr.png";
 
-// 👈 HOOK para detectar móvil
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   useEffect(() => {
@@ -14,14 +13,14 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
+export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonimo }) {
   const [menuActivo, setMenuActivo] = useState("inicio");
   const [animar, setAnimar] = useState(true);
   const [animandoProfesor, setAnimandoProfesor] = useState(false);
-  const [animandoAnonimo, setAnimandoAnonimo] = useState(false);
-  const [menuAbierto, setMenuAbierto] = useState(false); // 👈 menú hamburguesa
-  const isMobile = useIsMobile(); // 👈
+  const [menuAbierto, setMenuAbierto] = useState(false);
+  const isMobile = useIsMobile();
 
+  // Pre-calentar el backend al entrar en la pantalla de inicio
   useEffect(() => {
     fetch("https://backend-isu.onrender.com/api/escenarios").catch(() => {});
   }, []);
@@ -49,15 +48,90 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
   };
 
   const handleAnonimo = () => {
-    setAnimandoAnonimo(true);
-    setTimeout(() => {
-      onJuzga();
-      setAnimandoAnonimo(false);
-    }, 1800);
+    if (cargandoAnonimo) return;
+    onJuzga();
   };
 
   return (
     <div style={{ fontFamily: "Montserrat, sans-serif" }}>
+
+      {/* OVERLAY CARGA ANÓNIMO — controlado por App.jsx */}
+      {cargandoAnonimo && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "#F0FBF5", zIndex: 9999,
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center", gap: "28px",
+          pointerEvents: "all"
+        }}>
+          <svg width="500" height="200" viewBox="0 0 500 200">
+            <line x1="0" y1="170" x2="500" y2="170" stroke="#007B3E" strokeWidth="3"/>
+            <g>
+              <rect x="370" y="80" width="90" height="65" rx="6" fill="#DFF5EA" stroke="#007B3E" strokeWidth="2.5"/>
+              <line x1="380" y1="97" x2="450" y2="97" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="380" y1="108" x2="445" y2="108" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="380" y1="119" x2="440" y2="119" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
+              <rect x="408" y="145" width="6" height="12" rx="2" fill="#007B3E"/>
+              <rect x="398" y="157" width="26" height="4" rx="2" fill="#007B3E"/>
+              <text x="460" y="122" fontFamily="Montserrat,sans-serif" fontSize="28" fontWeight="700" fill="#FFD700">?</text>
+            </g>
+            <g style={{ animation: "caminar 1.8s ease-in-out infinite" }}>
+              <ellipse cx="0" cy="172" rx="18" ry="5" fill="rgba(0,0,0,0.12)"/>
+              <line x1="-5" y1="148" x2="-10" y2="170" stroke="#00482B" strokeWidth="6" strokeLinecap="round"
+                style={{ animation: "piernaIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-5px 148px" }}/>
+              <line x1="5" y1="148" x2="10" y2="170" stroke="#00482B" strokeWidth="6" strokeLinecap="round"
+                style={{ animation: "piernaDer 0.4s ease-in-out infinite alternate", transformOrigin: "5px 148px" }}/>
+              <rect x="-10" y="120" width="20" height="28" rx="4" fill="#007B3E"/>
+              <polygon points="0,124 -3,138 0,135 3,138" fill="#FFD700"/>
+              <line x1="-10" y1="128" x2="-22" y2="145" stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round"
+                style={{ animation: "brazoIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-10px 128px" }}/>
+              <line x1="10" y1="128" x2="22" y2="145" stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round"
+                style={{ animation: "brazoDer 0.4s ease-in-out infinite alternate", transformOrigin: "10px 128px" }}/>
+              <rect x="-4" y="108" width="8" height="13" rx="3" fill="#F5CBA7"/>
+              <circle cx="0" cy="96" r="14" fill="#F5CBA7"/>
+              <rect x="-12" y="90" width="24" height="9" rx="4" fill="#00482B" opacity="0.85"/>
+              <circle cx="-5" cy="94" r="2.5" fill="white"/>
+              <circle cx="5" cy="94" r="2.5" fill="white"/>
+              <path d="M -4 103 Q 0 107 4 103" stroke="#333" strokeWidth="1.5" fill="none"/>
+              <rect x="-13" y="82" width="26" height="8" rx="4" fill="#4A2C0A"/>
+              <text x="0" y="76" textAnchor="middle" fontFamily="Montserrat,sans-serif"
+                fontSize="16" fontWeight="700" fill="#FFD700"
+                style={{ animation: "flotarInterrogacion 0.6s ease-in-out infinite alternate" }}>
+                ?
+              </text>
+            </g>
+            <text x="250" y="40" textAnchor="middle" fontFamily="Montserrat, sans-serif"
+              fontSize="18" fontWeight="700" fill="#00482B">
+              ¡Comienza el juicio!
+            </text>
+          </svg>
+
+          {/* Mensaje de espera */}
+          <div style={{ textAlign: "center" }}>
+            <p style={{
+              color: "#00482B", fontWeight: "700", fontSize: "17px",
+              margin: "0 0 8px 0"
+            }}>
+              Conectando con el servidor...
+            </p>
+            <p style={{
+              color: "#555", fontWeight: "400", fontSize: "14px",
+              margin: 0, maxWidth: "280px", lineHeight: "1.6"
+            }}>
+              La primera conexión puede tardar unos segundos. ¡Ya casi!
+            </p>
+          </div>
+
+          {/* Spinner */}
+          <div style={{
+            width: "44px", height: "44px",
+            border: "5px solid #DFF5EA",
+            borderTop: "5px solid #007B3E",
+            borderRadius: "50%",
+            animation: "girar 0.8s linear infinite"
+          }} />
+        </div>
+      )}
 
       {/* OVERLAY PROFESOR */}
       {animandoProfesor && (
@@ -104,77 +178,23 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
         </div>
       )}
 
-      {/* OVERLAY ANÓNIMO */}
-      {animandoAnonimo && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: "#F0FBF5", zIndex: 9999,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          pointerEvents: "none"
-        }}>
-          <svg width="500" height="200" viewBox="0 0 500 200">
-            <line x1="0" y1="170" x2="500" y2="170" stroke="#007B3E" strokeWidth="3"/>
-            <g>
-              <rect x="370" y="80" width="90" height="65" rx="6" fill="#DFF5EA" stroke="#007B3E" strokeWidth="2.5"/>
-              <line x1="380" y1="97" x2="450" y2="97" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="380" y1="108" x2="445" y2="108" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="380" y1="119" x2="440" y2="119" stroke="#007B3E" strokeWidth="2" strokeLinecap="round"/>
-              <rect x="408" y="145" width="6" height="12" rx="2" fill="#007B3E"/>
-              <rect x="398" y="157" width="26" height="4" rx="2" fill="#007B3E"/>
-              <text x="460" y="122" fontFamily="Montserrat,sans-serif" fontSize="28" fontWeight="700" fill="#FFD700">?</text>
-            </g>
-            <g style={{ animation: "caminar 1.8s ease-in-out forwards" }}>
-              <ellipse cx="0" cy="172" rx="18" ry="5" fill="rgba(0,0,0,0.12)"/>
-              <line x1="-5" y1="148" x2="-10" y2="170" stroke="#00482B" strokeWidth="6" strokeLinecap="round"
-                style={{ animation: "piernaIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-5px 148px" }}/>
-              <line x1="5" y1="148" x2="10" y2="170" stroke="#00482B" strokeWidth="6" strokeLinecap="round"
-                style={{ animation: "piernaDer 0.4s ease-in-out infinite alternate", transformOrigin: "5px 148px" }}/>
-              <rect x="-10" y="120" width="20" height="28" rx="4" fill="#007B3E"/>
-              <polygon points="0,124 -3,138 0,135 3,138" fill="#FFD700"/>
-              <line x1="-10" y1="128" x2="-22" y2="145" stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round"
-                style={{ animation: "brazoIzq 0.4s ease-in-out infinite alternate", transformOrigin: "-10px 128px" }}/>
-              <line x1="10" y1="128" x2="22" y2="145" stroke="#F5CBA7" strokeWidth="5" strokeLinecap="round"
-                style={{ animation: "brazoDer 0.4s ease-in-out infinite alternate", transformOrigin: "10px 128px" }}/>
-              <rect x="-4" y="108" width="8" height="13" rx="3" fill="#F5CBA7"/>
-              <circle cx="0" cy="96" r="14" fill="#F5CBA7"/>
-              <rect x="-12" y="90" width="24" height="9" rx="4" fill="#00482B" opacity="0.85"/>
-              <circle cx="-5" cy="94" r="2.5" fill="white"/>
-              <circle cx="5" cy="94" r="2.5" fill="white"/>
-              <path d="M -4 103 Q 0 107 4 103" stroke="#333" strokeWidth="1.5" fill="none"/>
-              <rect x="-13" y="82" width="26" height="8" rx="4" fill="#4A2C0A"/>
-              <text x="0" y="76" textAnchor="middle" fontFamily="Montserrat,sans-serif"
-                fontSize="16" fontWeight="700" fill="#FFD700"
-                style={{ animation: "flotarInterrogacion 0.6s ease-in-out infinite alternate" }}>
-                ?
-              </text>
-            </g>
-            <text x="250" y="40" textAnchor="middle" fontFamily="Montserrat, sans-serif"
-              fontSize="18" fontWeight="700" fill="#00482B"
-              style={{ animation: "fadeInText 0.5s ease forwards" }}>
-              ¡Comienza el juicio!
-            </text>
-          </svg>
-        </div>
-      )}
-
       {/* NAVBAR */}
       <nav style={{
         backgroundColor: "#007B3E",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: isMobile ? "0 20px" : "0 60px", // 👈
+        padding: isMobile ? "0 20px" : "0 60px",
         height: "90px",
         position: "relative",
       }}>
         <img
           src={logo}
           alt="ISU"
-          style={{ height: isMobile ? "50px" : "70px", cursor: "pointer" }} // 👈
+          style={{ height: isMobile ? "50px" : "70px", cursor: "pointer" }}
           onClick={() => manejarClickMenu("inicio")}
         />
 
-        {/* MENÚ HAMBURGUESA EN MÓVIL */}
         {isMobile ? (
           <button
             onClick={() => setMenuAbierto(!menuAbierto)}
@@ -186,7 +206,6 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
             {menuAbierto ? "✕" : "☰"}
           </button>
         ) : (
-          // MENÚ DESKTOP
           <div style={{ display: "flex", alignItems: "center", gap: "50px" }}>
             {[
               { label: "Inicio", key: "inicio" },
@@ -208,7 +227,6 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
           </div>
         )}
 
-        {/* BOTÓN SOY PROFESOR - solo desktop */}
         {!isMobile && (!usuario || usuario.id_rol === 4) && (
           <button onClick={handleSoyProfesor} disabled={animandoProfesor}
             style={{
@@ -267,10 +285,10 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
         transition: "all 0.4s ease",
       }}>
         {menuActivo === "inicio" && (
-          <div style={{ width: isMobile ? "95%" : "600px", margin: "0 auto", padding: isMobile ? "0 10px" : "0" }}> {/* 👈 */}
+          <div style={{ width: isMobile ? "95%" : "600px", margin: "0 auto", padding: isMobile ? "0 10px" : "0" }}>
             <iframe
               width="100%"
-              height={isMobile ? "220px" : "350px"} // 👈
+              height={isMobile ? "220px" : "350px"}
               src="https://www.youtube.com/embed/A69N6L35nVQ"
               title="Video"
               frameBorder="0"
@@ -281,26 +299,29 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
             <div style={{ display: "flex", justifyContent: "center", marginTop: "30px" }}>
               <button
                 onClick={handleAnonimo}
+                disabled={cargandoAnonimo}
                 style={{
-                  backgroundColor: "#007B3E", color: "white",
+                  backgroundColor: cargandoAnonimo ? "#aaa" : "#007B3E",
+                  color: "white",
                   border: "none", borderRadius: "40px",
-                  padding: isMobile ? "12px 30px" : "15px 40px", // 👈
-                  fontSize: isMobile ? "16px" : "18px", // 👈
-                  fontWeight: "700", cursor: "pointer",
+                  padding: isMobile ? "12px 30px" : "15px 40px",
+                  fontSize: isMobile ? "16px" : "18px",
+                  fontWeight: "700",
+                  cursor: cargandoAnonimo ? "default" : "pointer",
                   transition: "all 0.3s ease",
                   boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
                 }}
-                onMouseEnter={(e) => e.target.style.transform = "scale(1.07)"}
-                onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+                onMouseEnter={(e) => { if (!cargandoAnonimo) e.target.style.transform = "scale(1.07)"; }}
+                onMouseLeave={(e) => { e.target.style.transform = "scale(1)"; }}
               >
-                COMIENZA EL JUICIO
+                {cargandoAnonimo ? "Cargando..." : "COMIENZA EL JUICIO"}
               </button>
             </div>
           </div>
         )}
 
         {menuActivo === "que" && (
-          <div style={{ maxWidth: "1000px", margin: "0 auto", padding: isMobile ? "20px 20px" : "20px 40px" }}> {/* 👈 */}
+          <div style={{ maxWidth: "1000px", margin: "0 auto", padding: isMobile ? "20px 20px" : "20px 40px" }}>
             <h1 style={{ color: "#007B3E" }}>¿Qué hacemos?</h1>
             <p style={{ lineHeight: "1.8", marginTop: "20px" }}>
               Este proyecto busca concientizar a los docentes sobre los usos,
@@ -310,7 +331,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
 
             <div style={{
               display: "grid",
-              gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", // 👈
+              gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
               gap: "20px", marginTop: "40px",
             }}>
               {[
@@ -360,18 +381,18 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
         )}
 
         <div style={{ display: "flex", justifyContent: "center", marginTop: "5px" }}>
-          <img src={LogoUdec} alt="UDEC" style={{ width: isMobile ? "160px" : "250px" }} /> {/* 👈 */}
+          <img src={LogoUdec} alt="UDEC" style={{ width: isMobile ? "160px" : "250px" }} />
         </div>
       </div>
 
       {/* FOOTER */}
       <footer style={{
         backgroundColor: "#00482B", color: "white",
-        padding: isMobile ? "20px" : "30px 130px" // 👈
+        padding: isMobile ? "20px" : "30px 130px"
       }}>
         <div style={{
           display: "flex",
-          flexDirection: isMobile ? "column" : "row", // 👈
+          flexDirection: isMobile ? "column" : "row",
           justifyContent: "space-between",
           alignItems: "center",
           gap: isMobile ? "16px" : "0",
@@ -401,8 +422,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
       <style>{`
         @keyframes caminar {
           0%   { transform: translateX(60px); }
-          85%  { transform: translateX(370px); opacity: 1; }
-          100% { transform: translateX(380px); opacity: 0; }
+          100% { transform: translateX(60px); }
         }
         @keyframes brazoIzq {
           from { transform: rotate(-25deg); }
@@ -427,6 +447,10 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario }) {
         @keyframes flotarInterrogacion {
           from { transform: translateY(0px); }
           to   { transform: translateY(-5px); }
+        }
+        @keyframes girar {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
         }
       `}</style>
     </div>

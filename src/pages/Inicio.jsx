@@ -383,14 +383,14 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
                   icon: "⚖️",
                   titulo: "Toma de decisiones",
                   texto: "El docente analiza cada situación y elige su postura frente a dilemas pedagógicos concretos.",
-                  accentColor: "#B45309",
+                  accentColor: "#F7931E",
                   bgColor: "#FEF3C7",
                 },
                 {
                   icon: "🔍",
                   titulo: "Reflexión crítica",
                   texto: "Evaluación ética y pedagógica de cada decisión, promoviendo una mirada informada y responsable.",
-                  accentColor: "#1D4ED8",
+                  accentColor: "#00A99D",
                   bgColor: "#EFF6FF",
                 },
               ].map((card, i) => (
@@ -432,10 +432,10 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
               <div style={{
                 background: "#FFF9F9",
                 borderRadius: "16px", padding: "32px 28px",
-                borderLeft: "5px solid #DC2626",
+                borderLeft: "5px solid #F7931E",
               }}>
                 <h2 style={{
-                  color: "#B91C1C", fontWeight: "700", fontSize: "19px",
+                  color: "#F7931E", fontWeight: "700", fontSize: "19px",
                   margin: "0 0 14px 0",
                 }}>Problemática</h2>
                 <p style={{ color: "#444", lineHeight: "1.85", fontSize: "15px", margin: 0 }}>
@@ -584,8 +584,8 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
                   nombre: "Blanca Luz Buitrago Sánchez",
                   rol: "Colaboradora",
                   desc: "Integrante del equipo de investigación y desarrollo del proyecto Praxis en la Universidad de Cundinamarca.",
-                  avatarColor: "#6D28D9",
-                  avatarBg: "#EDE9FE",
+                  avatarColor: "#00A99D",
+                  avatarBg: "#c1eae7 ",
                 },
                 {
                   initials: "JD",

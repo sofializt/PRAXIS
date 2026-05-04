@@ -340,7 +340,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
                 color: "rgba(255,255,255,0.65)", fontWeight: "700",
                 fontSize: "12px", letterSpacing: "2.5px",
                 textTransform: "uppercase", margin: "0 0 14px 0",
-              }}>Plataforma Praxis · UDC</p>
+              }}>Plataforma Praxis · UDEC</p>
               <h1 style={{
                 color: "white", fontWeight: "800",
                 fontSize: isMobile ? "30px" : "42px",
@@ -496,6 +496,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
                     height: isMobile ? "100px" : "130px",
                     borderRadius: "50%",
                     objectFit: "cover",
+                    objectPosition: "center 20%",
                     border: "4px solid #007B3E",
                     display: "block",
                   }}

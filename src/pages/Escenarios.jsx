@@ -35,6 +35,10 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
   const [cargandoOpciones, setCargandoOpciones] = useState(false);
   const [errorCarga, setErrorCarga] = useState(false);
 
+  // — Modal aviso IA —
+  const [modalVisible, setModalVisible] = useState(false);
+  const [dimensionPendiente, setDimensionPendiente] = useState(null);
+
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -166,6 +170,20 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
     else cerrarSesion();
   };
 
+  // Cuando el usuario hace clic en una categoría: mostrar modal primero
+  const handleSeleccionarCategoria = (dim) => {
+    setDimensionPendiente(dim);
+    setModalVisible(true);
+  };
+
+  // Cuando acepta el aviso
+  const handleAceptarModal = () => {
+    setModalVisible(false);
+    setDimensionSeleccionada(dimensionPendiente.id);
+    setIndiceActual(0);
+    setDimensionPendiente(null);
+  };
+
   const escenariosFiltrados = dimensionSeleccionada
     ? escenarios.filter((e) => e.id_dimension === dimensionSeleccionada)
     : escenarios;
@@ -212,6 +230,112 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#FFFFFF", fontFamily: "Montserrat, sans-serif", display: "flex", flexDirection: "column" }}>
+
+      {/* ── MODAL AVISO IA ── */}
+      {modalVisible && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          backgroundColor: "rgba(0,0,0,0.55)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "20px",
+          animation: "fadeIn 0.2s ease",
+        }}>
+          <div style={{
+            backgroundColor: "white",
+            borderRadius: "20px",
+            maxWidth: "480px",
+            width: "100%",
+            padding: isMobile ? "28px 24px" : "40px 44px",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+            animation: "popModal 0.25s cubic-bezier(0.34,1.56,0.64,1)",
+          }}>
+            {/* Ícono */}
+            <div style={{
+              width: "56px", height: "56px", borderRadius: "50%",
+              backgroundColor: "#FEF3C7",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "26px", marginBottom: "20px",
+            }}>⚠️</div>
+
+            {/* Título */}
+            <h2 style={{
+              color: "#00482B", fontWeight: "800",
+              fontSize: isMobile ? "18px" : "20px",
+              margin: "0 0 14px 0", lineHeight: 1.3,
+            }}>
+              Aviso sobre el uso de IA
+            </h2>
+
+            {/* Cuerpo */}
+            <p style={{
+              color: "#444", fontSize: isMobile ? "14px" : "15px",
+              lineHeight: "1.75", margin: "0 0 10px 0",
+            }}>
+              Los <strong>escenarios educativos</strong> y sus <strong>descripciones</strong> presentados
+              en esta plataforma han sido definidos con apoyo de inteligencia artificial,
+              revisados y ajustados por el equipo de investigación.
+            </p>
+            <p style={{
+              color: "#444", fontSize: isMobile ? "14px" : "15px",
+              lineHeight: "1.75", margin: "0 0 24px 0",
+            }}>
+              Las <strong>imágenes</strong> asociadas a cada opción de respuesta también
+              fueron generadas mediante herramientas de IA con fines ilustrativos.
+            </p>
+
+            {/* Línea separadora */}
+            <div style={{ borderTop: "1px solid #E5E7EB", marginBottom: "24px" }} />
+
+            {/* Categoría seleccionada */}
+            <p style={{
+              color: "#888", fontSize: "13px", margin: "0 0 20px 0",
+            }}>
+              Vas a explorar la categoría:
+              <span style={{
+                display: "inline-block", marginLeft: "8px",
+                backgroundColor: "#007B3E", color: "white",
+                fontWeight: "700", fontSize: "13px",
+                padding: "3px 12px", borderRadius: "20px",
+              }}>
+                {dimensionPendiente?.nombre}
+              </span>
+            </p>
+
+            {/* Botones */}
+            <div style={{ display: "flex", gap: "12px", flexDirection: isMobile ? "column" : "row" }}>
+              <button
+                onClick={() => { setModalVisible(false); setDimensionPendiente(null); }}
+                style={{
+                  flex: 1, padding: "12px", borderRadius: "30px",
+                  border: "2px solid #E5E7EB", backgroundColor: "white",
+                  color: "#555", fontWeight: "600", fontSize: "14px",
+                  cursor: "pointer", fontFamily: "Montserrat, sans-serif",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#F5F5F5"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "white"; }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleAceptarModal}
+                style={{
+                  flex: 1, padding: "12px", borderRadius: "30px",
+                  border: "none", backgroundColor: "#007B3E",
+                  color: "white", fontWeight: "700", fontSize: "14px",
+                  cursor: "pointer", fontFamily: "Montserrat, sans-serif",
+                  boxShadow: "0 4px 14px rgba(0,123,62,0.35)",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#00612F"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#007B3E"; }}
+              >
+                Entendido, continuar →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* HEADER */}
       <nav style={{
@@ -362,7 +486,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                   {DIMENSIONES.map((dim) => (
                     <div
                       key={dim.id}
-                      onClick={() => { setDimensionSeleccionada(dim.id); setIndiceActual(0); }}
+                      onClick={() => handleSeleccionarCategoria(dim)}
                       style={{
                         backgroundColor: "#007B3E", color: "white",
                         padding: isMobile ? "40px 30px" : "60px 70px",
@@ -579,6 +703,10 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
           0%   { transform: scale(2) rotate(-8deg); opacity: 0; }
           60%  { transform: scale(0.9) rotate(2deg); opacity: 1; }
           100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes popModal {
+          from { transform: scale(0.85); opacity: 0; }
+          to   { transform: scale(1);    opacity: 1; }
         }
         `}
       </style>

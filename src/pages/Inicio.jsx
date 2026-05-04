@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import logo from "../assets/praxis.svg";
 import LogoUdec from "../assets/udecblanco.png";
 import qr from "../assets/qr.png";
+import fotoHugo from "../assets/hugo.jpg";
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -20,7 +21,6 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
   const [menuAbierto, setMenuAbierto] = useState(false);
   const isMobile = useIsMobile();
 
-  // Pre-calentar el backend al entrar en la pantalla de inicio
   useEffect(() => {
     fetch("https://backend-isu.onrender.com/api/escenarios").catch(() => {});
   }, []);
@@ -55,7 +55,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
   return (
     <div style={{ fontFamily: "Montserrat, sans-serif" }}>
 
-      {/* OVERLAY CARGA ANÓNIMO — controlado por App.jsx */}
+      {/* OVERLAY CARGA ANÓNIMO */}
       {cargandoAnonimo && (
         <div style={{
           position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
@@ -105,24 +105,14 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
               ¡Comienza el juicio!
             </text>
           </svg>
-
-          {/* Mensaje de espera */}
           <div style={{ textAlign: "center" }}>
-            <p style={{
-              color: "#00482B", fontWeight: "700", fontSize: "17px",
-              margin: "0 0 8px 0"
-            }}>
+            <p style={{ color: "#00482B", fontWeight: "700", fontSize: "17px", margin: "0 0 8px 0" }}>
               Conectando con el servidor...
             </p>
-            <p style={{
-              color: "#555", fontWeight: "400", fontSize: "14px",
-              margin: 0, maxWidth: "280px", lineHeight: "1.6"
-            }}>
+            <p style={{ color: "#555", fontWeight: "400", fontSize: "14px", margin: 0, maxWidth: "280px", lineHeight: "1.6" }}>
               La primera conexión puede tardar unos segundos. ¡Ya casi!
             </p>
           </div>
-
-          {/* Spinner */}
           <div style={{
             width: "44px", height: "44px",
             border: "5px solid #DFF5EA",
@@ -284,6 +274,8 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
         transform: animar ? "translateY(0)" : "translateY(20px)",
         transition: "all 0.4s ease",
       }}>
+
+        {/* ── INICIO ── */}
         {menuActivo === "inicio" && (
           <div style={{ width: isMobile ? "95%" : "600px", margin: "0 auto", padding: isMobile ? "0 10px" : "0" }}>
             <iframe
@@ -320,66 +312,366 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
           </div>
         )}
 
+        {/* ── QUÉ HACEMOS ── */}
         {menuActivo === "que" && (
-          <div style={{ maxWidth: "1000px", margin: "0 auto", padding: isMobile ? "20px 20px" : "20px 40px" }}>
-            <h1 style={{ color: "#007B3E" }}>¿Qué hacemos?</h1>
-            <p style={{ lineHeight: "1.8", marginTop: "20px" }}>
-              Este proyecto busca concientizar a los docentes sobre los usos,
-              implicaciones y riesgos de la inteligencia artificial en la educación,
-              frente a una adopción acelerada que muchas veces ocurre sin formación adecuada.
-            </p>
+          <div style={{ maxWidth: "960px", margin: "0 auto", padding: isMobile ? "0 20px 40px" : "0 40px 60px" }}>
 
+            {/* HERO BANNER */}
+            <div style={{
+              background: "linear-gradient(135deg, #007B3E 0%, #00482B 100%)",
+              borderRadius: "20px",
+              padding: isMobile ? "36px 28px" : "52px 60px",
+              marginBottom: "52px",
+              position: "relative",
+              overflow: "hidden",
+            }}>
+              {/* Círculos decorativos */}
+              <div style={{
+                position: "absolute", top: "-50px", right: "-50px",
+                width: "220px", height: "220px", borderRadius: "50%",
+                background: "rgba(255,255,255,0.06)",
+              }} />
+              <div style={{
+                position: "absolute", bottom: "-70px", left: "38%",
+                width: "160px", height: "160px", borderRadius: "50%",
+                background: "rgba(255,255,255,0.04)",
+              }} />
+              <p style={{
+                color: "rgba(255,255,255,0.65)", fontWeight: "700",
+                fontSize: "12px", letterSpacing: "2.5px",
+                textTransform: "uppercase", margin: "0 0 14px 0",
+              }}>Plataforma Praxis · UDC</p>
+              <h1 style={{
+                color: "white", fontWeight: "800",
+                fontSize: isMobile ? "30px" : "42px",
+                margin: "0 0 22px 0", lineHeight: 1.15,
+              }}>¿Qué hacemos?</h1>
+              <p style={{
+                color: "rgba(255,255,255,0.88)", lineHeight: "1.85",
+                fontSize: isMobile ? "15px" : "16px",
+                maxWidth: "680px", margin: 0,
+              }}>
+                El proyecto busca concienciar a los docentes sobre los usos, implicaciones y riesgos
+                de la inteligencia artificial en la educación y facilitarles una reflexión a través de
+                diversas situaciones y escenarios que ofrece la plataforma Praxis, ante la adopción
+                acelerada y poco planificada que a veces se produce sin la formación adecuada.
+              </p>
+            </div>
+
+            {/* QUÉ OFRECE */}
+            <h2 style={{
+              color: "#007B3E", fontWeight: "700", fontSize: "22px",
+              margin: "0 0 6px 0",
+            }}>¿Qué ofrece la plataforma?</h2>
+            <p style={{ color: "#666", fontSize: "15px", margin: "0 0 28px 0", lineHeight: "1.6" }}>
+              Praxis integra tres pilares para acompañar al docente en su proceso de reflexión.
+            </p>
             <div style={{
               display: "grid",
               gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
-              gap: "20px", marginTop: "40px",
+              gap: "20px", marginBottom: "56px",
             }}>
               {[
-                { titulo: "Escenarios educativos", texto: "Casos reales sobre IA en el aula." },
-                { titulo: "Toma de decisiones", texto: "El docente analiza y decide." },
-                { titulo: "Reflexión crítica", texto: "Evaluación ética y pedagógica." },
+                {
+                  icon: "📚",
+                  titulo: "Escenarios educativos",
+                  texto: "Casos reales sobre el uso de la IA en el aula, diseñados para provocar la reflexión docente.",
+                  accentColor: "#007B3E",
+                  bgColor: "#E8F5EE",
+                },
+                {
+                  icon: "⚖️",
+                  titulo: "Toma de decisiones",
+                  texto: "El docente analiza cada situación y elige su postura frente a dilemas pedagógicos concretos.",
+                  accentColor: "#B45309",
+                  bgColor: "#FEF3C7",
+                },
+                {
+                  icon: "🔍",
+                  titulo: "Reflexión crítica",
+                  texto: "Evaluación ética y pedagógica de cada decisión, promoviendo una mirada informada y responsable.",
+                  accentColor: "#1D4ED8",
+                  bgColor: "#EFF6FF",
+                },
               ].map((card, i) => (
                 <div key={i}
                   style={{
-                    backgroundColor: "#F5F5F5", padding: "20px",
-                    borderRadius: "15px", textAlign: "center",
-                    transition: "all 0.3s ease",
+                    backgroundColor: card.bgColor,
+                    borderRadius: "16px",
+                    padding: "30px 24px",
+                    borderTop: `4px solid ${card.accentColor}`,
+                    transition: "transform 0.25s ease, box-shadow 0.25s ease",
+                    cursor: "default",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-8px)";
-                    e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
+                    e.currentTarget.style.transform = "translateY(-6px)";
+                    e.currentTarget.style.boxShadow = "0 14px 32px rgba(0,0,0,0.13)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = "translateY(0)";
                     e.currentTarget.style.boxShadow = "none";
-                  }}
-                >
-                  <h3 style={{ color: "#00482B" }}>{card.titulo}</h3>
-                  <p style={{ fontSize: "14px" }}>{card.texto}</p>
+                  }}>
+                  <div style={{ fontSize: "34px", marginBottom: "16px" }}>{card.icon}</div>
+                  <h3 style={{
+                    color: card.accentColor, fontWeight: "700", fontSize: "17px",
+                    margin: "0 0 10px 0",
+                  }}>{card.titulo}</h3>
+                  <p style={{ color: "#444", fontSize: "14px", lineHeight: "1.75", margin: 0 }}>
+                    {card.texto}
+                  </p>
                 </div>
               ))}
             </div>
 
-            <h2 style={{ color: "#00482B", marginTop: "50px" }}>Problemática</h2>
-            <p style={{ lineHeight: "1.8" }}>
-              La rápida expansión de la inteligencia artificial ha superado la capacidad
-              de adaptación pedagógica, generando una brecha entre su uso y la formación docente.
-            </p>
-
-            <h2 style={{ color: "#00482B", marginTop: "40px" }}>Objetivo</h2>
-            <p style={{ lineHeight: "1.8" }}>
-              Promover la toma de decisiones informadas mediante una plataforma experimental
-              basada en escenarios educativos.
-            </p>
-
-            <div style={{ textAlign: "center", marginTop: "50px" }}>
-              <h3 style={{ color: "#00482B" }}>Conoce los programas académicos</h3>
-              <img src={qr} alt="QR" style={{ width: "150px" }} />
-              <p style={{ fontSize: "14px" }}>Escanea el código para más información.</p>
+            {/* PROBLEMÁTICA + OBJETIVO */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+              gap: "24px", marginBottom: "56px",
+            }}>
+              <div style={{
+                background: "#FFF9F9",
+                borderRadius: "16px", padding: "32px 28px",
+                borderLeft: "5px solid #DC2626",
+              }}>
+                <h2 style={{
+                  color: "#B91C1C", fontWeight: "700", fontSize: "19px",
+                  margin: "0 0 14px 0",
+                }}>Problemática</h2>
+                <p style={{ color: "#444", lineHeight: "1.85", fontSize: "15px", margin: 0 }}>
+                  La inteligencia artificial ha irrumpido en todos los ámbitos de la sociedad.
+                  Vivimos una época de grandes transformaciones en la que parece no haber tiempo
+                  para la reflexión. La rapidez de los avances y la fuerte expansión de la IA
+                  ha superado la capacidad de adaptación pedagógica de los profesores, generando
+                  una brecha entre su uso y la formación docente.
+                </p>
+              </div>
+              <div style={{
+                background: "#F0FBF5",
+                borderRadius: "16px", padding: "32px 28px",
+                borderLeft: "5px solid #007B3E",
+              }}>
+                <h2 style={{
+                  color: "#007B3E", fontWeight: "700", fontSize: "19px",
+                  margin: "0 0 14px 0",
+                }}>¿Qué pretendemos?</h2>
+                <p style={{ color: "#444", lineHeight: "1.85", fontSize: "15px", margin: 0 }}>
+                  Concienciar a los profesores sobre los usos y repercusiones de la IA en los
+                  procesos de enseñanza y aprendizaje mediante el uso de la plataforma
+                  experimental Praxis, promoviendo decisiones informadas y una reflexión
+                  pedagógica profunda.
+                </p>
+              </div>
             </div>
+
+            {/* QUIÉNES SOMOS */}
+            <h2 style={{
+              color: "#007B3E", fontWeight: "700", fontSize: "22px",
+              margin: "0 0 8px 0",
+            }}>¿Quiénes lo hacemos?</h2>
+            <p style={{ color: "#666", fontSize: "15px", lineHeight: "1.7", marginBottom: "32px" }}>
+              Esta iniciativa nace como un proyecto social de desarrollo y transformación
+              translocal del Instituto de Posgrados de la Universidad de Cundinamarca.
+            </p>
+
+            {/* Tarjeta Hugo — con foto */}
+            <div style={{
+              background: "white",
+              borderRadius: "18px",
+              padding: isMobile ? "28px 24px" : "36px 40px",
+              border: "1px solid #E5E7EB",
+              marginBottom: "24px",
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap: "32px",
+              alignItems: isMobile ? "center" : "flex-start",
+              boxShadow: "0 4px 20px rgba(0,75,62,0.08)",
+            }}>
+              <div style={{ flexShrink: 0, textAlign: "center" }}>
+                <img
+                  src={fotoHugo}
+                  alt="Hugo Alexander Rozo García"
+                  style={{
+                    width: isMobile ? "100px" : "130px",
+                    height: isMobile ? "100px" : "130px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    border: "4px solid #007B3E",
+                    display: "block",
+                  }}
+                />
+                {/* Badge líder */}
+                <span style={{
+                  display: "inline-block",
+                  marginTop: "10px",
+                  backgroundColor: "#007B3E",
+                  color: "white",
+                  fontSize: "11px",
+                  fontWeight: "700",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  padding: "4px 12px",
+                  borderRadius: "20px",
+                }}>Líder</span>
+              </div>
+              <div style={{ textAlign: isMobile ? "center" : "left" }}>
+                <p style={{
+                  color: "#00482B", fontWeight: "800", fontSize: isMobile ? "18px" : "20px",
+                  margin: "0 0 4px 0",
+                }}>Hugo Alexander Rozo García</p>
+                <p style={{
+                  color: "#007B3E", fontSize: "13px", fontWeight: "600",
+                  textTransform: "uppercase", letterSpacing: "1px",
+                  margin: "0 0 14px 0",
+                }}>Profesor e investigador en EdTech</p>
+                <p style={{
+                  color: "#555", fontSize: "15px", lineHeight: "1.8",
+                  margin: "0 0 20px 0",
+                }}>
+                  Investigador asociado según la clasificación de MinCiencias. Ha publicado
+                  más de 15 artículos (12 indexados en Scopus en todos los cuartiles),
+                  6 capítulos de libros y cuenta con una patente de invención concedida.
+                  Advierte sobre los cambios y transformaciones que puede traer la IA
+                  desde una perspectiva distópica.
+                </p>
+                <div style={{
+                  display: "flex", gap: "12px", flexWrap: "wrap",
+                  justifyContent: isMobile ? "center" : "flex-start",
+                }}>
+                  <a href="https://www.researchgate.net/profile/Hugo-Rozo-Garcia"
+                    target="_blank" rel="noreferrer"
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: "6px",
+                      backgroundColor: "#007B3E", color: "white",
+                      padding: "9px 20px", borderRadius: "22px",
+                      fontSize: "13px", fontWeight: "700",
+                      textDecoration: "none", transition: "opacity 0.2s",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                  >
+                    ResearchGate
+                  </a>
+                  <a href="https://www.linkedin.com/in/hugorozo/"
+                    target="_blank" rel="noreferrer"
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: "6px",
+                      backgroundColor: "#0077B5", color: "white",
+                      padding: "9px 20px", borderRadius: "22px",
+                      fontSize: "13px", fontWeight: "700",
+                      textDecoration: "none", transition: "opacity 0.2s",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                  >
+                    LinkedIn
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Grid equipo — sin foto, con avatar de iniciales */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
+              gap: "18px",
+              marginBottom: "56px",
+            }}>
+              {[
+                {
+                  initials: "BB",
+                  nombre: "Blanca Luz Buitrago Sánchez",
+                  rol: "Colaboradora",
+                  desc: "Integrante del equipo de investigación y desarrollo del proyecto Praxis en la Universidad de Cundinamarca.",
+                  avatarColor: "#6D28D9",
+                  avatarBg: "#EDE9FE",
+                },
+                {
+                  initials: "JD",
+                  nombre: "John Jairo Durán",
+                  rol: "Colaborador",
+                  desc: "Integrante del equipo de investigación y desarrollo del proyecto Praxis en la Universidad de Cundinamarca.",
+                  avatarColor: "#B45309",
+                  avatarBg: "#FEF3C7",
+                },
+                {
+                  initials: "PL",
+                  nombre: "Paula Sofía Lizcano Triana",
+                  rol: "Practicante · Ingeniería de Sistemas",
+                  desc: "Desarrollo frontend y backend, gestión de bases de datos y diseño de la plataforma. Trabaja con React, Node.js y SQL, enfocada en interfaces funcionales y claras.",
+                  avatarColor: "#007B3E",
+                  avatarBg: "#DCFCE7",
+                },
+              ].map((p, i) => (
+                <div key={i} style={{
+                  background: "white",
+                  borderRadius: "16px",
+                  padding: "28px 22px",
+                  border: "1px solid #E5E7EB",
+                  boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+                  transition: "transform 0.25s ease, box-shadow 0.25s ease",
+                  cursor: "default",
+                }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-5px)";
+                    e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.11)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.05)";
+                  }}>
+                  <div style={{
+                    width: "58px", height: "58px", borderRadius: "50%",
+                    backgroundColor: p.avatarBg,
+                    border: `2px solid ${p.avatarColor}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: p.avatarColor, fontWeight: "800", fontSize: "18px",
+                    marginBottom: "16px", letterSpacing: "0.5px",
+                  }}>{p.initials}</div>
+                  <p style={{
+                    fontWeight: "700", fontSize: "15px", color: "#1A1A1A",
+                    margin: "0 0 5px 0", lineHeight: 1.3,
+                  }}>{p.nombre}</p>
+                  <p style={{
+                    fontSize: "11px", fontWeight: "700", color: p.avatarColor,
+                    textTransform: "uppercase", letterSpacing: "1px",
+                    margin: "0 0 12px 0",
+                  }}>{p.rol}</p>
+                  <p style={{
+                    color: "#555", fontSize: "13px", lineHeight: "1.75", margin: 0,
+                  }}>{p.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* QR */}
+            <div style={{
+              textAlign: "center",
+              background: "#F0FBF5",
+              borderRadius: "18px",
+              padding: "40px 24px",
+              marginBottom: "16px",
+            }}>
+              <h3 style={{
+                color: "#00482B", fontWeight: "700", fontSize: "18px",
+                margin: "0 0 18px 0",
+              }}>
+                Conoce los programas académicos
+              </h3>
+              <img
+                src={qr}
+                alt="QR UDC"
+                style={{ width: "130px", borderRadius: "12px", border: "3px solid #007B3E" }}
+              />
+              <p style={{ color: "#555", fontSize: "14px", marginTop: "14px", margin: "14px 0 0 0" }}>
+                Escanea el código para más información.
+              </p>
+            </div>
+
           </div>
         )}
 
+        {/* LOGO UDEC */}
         <div style={{ display: "flex", justifyContent: "center", marginTop: "5px" }}>
           <img src={LogoUdec} alt="UDEC" style={{ width: isMobile ? "160px" : "250px" }} />
         </div>

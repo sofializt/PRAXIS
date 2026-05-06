@@ -32,6 +32,12 @@ export default function App() {
   };
 
   const crearAnonimo = async () => {
+    // Si ya hay un docente autenticado, solo llevarlo a escenarios sin tocar su sesión
+    if (usuario?.id_rol === 3) {
+      setPantalla("escenarios");
+      return;
+    }
+
     setCargandoAnonimo(true);
     localStorage.clear();
     for (let intento = 1; intento <= 3; intento++) {

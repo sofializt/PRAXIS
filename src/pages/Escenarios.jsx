@@ -35,7 +35,6 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
   const [cargandoOpciones, setCargandoOpciones] = useState(false);
   const [errorCarga, setErrorCarga] = useState(false);
 
-  // — Modal aviso IA —
   const [modalVisible, setModalVisible] = useState(false);
   const [dimensionPendiente, setDimensionPendiente] = useState(null);
 
@@ -165,18 +164,16 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
     onCerrarSesion();
   };
 
+  // ← ya NO llama a cerrarSesion, solo vuelve al inicio manteniendo la sesión
   const volverInicio = () => {
     if (onVolverInicio) onVolverInicio();
-    else cerrarSesion();
   };
 
-  // Cuando el usuario hace clic en una categoría: mostrar modal primero
   const handleSeleccionarCategoria = (dim) => {
     setDimensionPendiente(dim);
     setModalVisible(true);
   };
 
-  // Cuando acepta el aviso
   const handleAceptarModal = () => {
     setModalVisible(false);
     setDimensionSeleccionada(dimensionPendiente.id);
@@ -219,7 +216,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
     }
   };
 
-  const esDocente = usuario?.id_rol !== 4;
+  const esDocente = usuario?.id_rol === 3;
 
   const Spinner = ({ mensaje = "Cargando..." }) => (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "100px 0", gap: "20px" }}>
@@ -231,7 +228,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#FFFFFF", fontFamily: "Montserrat, sans-serif", display: "flex", flexDirection: "column" }}>
 
-      {/* ── MODAL AVISO IA ── */}
+      {/* MODAL AVISO IA */}
       {modalVisible && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 9999,
@@ -241,15 +238,12 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
           animation: "fadeIn 0.2s ease",
         }}>
           <div style={{
-            backgroundColor: "white",
-            borderRadius: "20px",
-            maxWidth: "480px",
-            width: "100%",
+            backgroundColor: "white", borderRadius: "20px",
+            maxWidth: "480px", width: "100%",
             padding: isMobile ? "28px 24px" : "40px 44px",
             boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
             animation: "popModal 0.25s cubic-bezier(0.34,1.56,0.64,1)",
           }}>
-            {/* Ícono */}
             <div style={{
               width: "56px", height: "56px", borderRadius: "50%",
               backgroundColor: "#FEF3C7",
@@ -257,7 +251,6 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
               fontSize: "26px", marginBottom: "20px",
             }}>⚠️</div>
 
-            {/* Título */}
             <h2 style={{
               color: "#00482B", fontWeight: "800",
               fontSize: isMobile ? "18px" : "20px",
@@ -266,30 +259,19 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
               Aviso sobre el uso de IA
             </h2>
 
-            {/* Cuerpo */}
-            <p style={{
-              color: "#444", fontSize: isMobile ? "14px" : "15px",
-              lineHeight: "1.75", margin: "0 0 10px 0",
-            }}>
+            <p style={{ color: "#444", fontSize: isMobile ? "14px" : "15px", lineHeight: "1.75", margin: "0 0 10px 0" }}>
               Los <strong>escenarios educativos</strong> y sus <strong>descripciones</strong> presentados
               en esta plataforma han sido definidos con apoyo de inteligencia artificial,
               revisados y ajustados por el equipo de investigación.
             </p>
-            <p style={{
-              color: "#444", fontSize: isMobile ? "14px" : "15px",
-              lineHeight: "1.75", margin: "0 0 24px 0",
-            }}>
+            <p style={{ color: "#444", fontSize: isMobile ? "14px" : "15px", lineHeight: "1.75", margin: "0 0 24px 0" }}>
               Las <strong>imágenes</strong> asociadas a cada opción de respuesta también
               fueron generadas mediante herramientas de IA con fines ilustrativos.
             </p>
 
-            {/* Línea separadora */}
             <div style={{ borderTop: "1px solid #E5E7EB", marginBottom: "24px" }} />
 
-            {/* Categoría seleccionada */}
-            <p style={{
-              color: "#888", fontSize: "13px", margin: "0 0 20px 0",
-            }}>
+            <p style={{ color: "#888", fontSize: "13px", margin: "0 0 20px 0" }}>
               Vas a explorar la categoría:
               <span style={{
                 display: "inline-block", marginLeft: "8px",
@@ -301,7 +283,6 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
               </span>
             </p>
 
-            {/* Botones */}
             <div style={{ display: "flex", gap: "12px", flexDirection: isMobile ? "column" : "row" }}>
               <button
                 onClick={() => { setModalVisible(false); setDimensionPendiente(null); }}
@@ -309,8 +290,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                   flex: 1, padding: "12px", borderRadius: "30px",
                   border: "2px solid #E5E7EB", backgroundColor: "white",
                   color: "#555", fontWeight: "600", fontSize: "14px",
-                  cursor: "pointer", fontFamily: "Montserrat, sans-serif",
-                  transition: "all 0.2s",
+                  cursor: "pointer", fontFamily: "Montserrat, sans-serif", transition: "all 0.2s",
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#F5F5F5"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "white"; }}
@@ -324,8 +304,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                   border: "none", backgroundColor: "#007B3E",
                   color: "white", fontWeight: "700", fontSize: "14px",
                   cursor: "pointer", fontFamily: "Montserrat, sans-serif",
-                  boxShadow: "0 4px 14px rgba(0,123,62,0.35)",
-                  transition: "all 0.2s",
+                  boxShadow: "0 4px 14px rgba(0,123,62,0.35)", transition: "all 0.2s",
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#00612F"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#007B3E"; }}
@@ -340,16 +319,13 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
       {/* HEADER */}
       <nav style={{
         backgroundColor: "#007B3E",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: isMobile ? "0 20px" : "0 60px",
         height: isMobile ? "70px" : "100px",
         position: "relative",
       }}>
         <img
-          src={logo}
-          alt="ISU"
+          src={logo} alt="ISU"
           style={{ height: isMobile ? "50px" : "70px", cursor: "pointer" }}
           onClick={volverInicio}
         />
@@ -369,10 +345,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
               { label: "Juzga", key: "juzga" },
             ].map(({ label, key }) => (
               <span key={key}
-                onClick={() => {
-                  if (key === "juzga") return;
-                  volverInicio();
-                }}
+                onClick={() => { if (key !== "juzga") volverInicio(); }}
                 style={{
                   color: "white", fontWeight: "600", fontSize: "16px", cursor: "pointer",
                   borderBottom: key === "juzga" ? "2px solid white" : "2px solid transparent",
@@ -388,20 +361,33 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
           </div>
         )}
 
+        {/* Saludo + botón cerrar sesión — desktop */}
         {!isMobile && (
-          <button onClick={cerrarSesion}
-            style={{
-              backgroundColor: "white", color: "#00482B", border: "none",
-              borderRadius: "30px", padding: "12px 28px", fontWeight: "700",
-              fontSize: "15px", cursor: "pointer", transition: "all 0.3s",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-              visibility: esDocente ? "visible" : "hidden"
-            }}
-            onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
-            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-          >
-            CERRAR SESIÓN
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            {esDocente && (
+              <span style={{
+                color: "white", fontWeight: "600", fontSize: "14px",
+                backgroundColor: "rgba(255,255,255,0.15)",
+                padding: "8px 18px", borderRadius: "30px",
+              }}>
+                👋 Hola, {usuario?.nombre}
+              </span>
+            )}
+            <button
+              onClick={cerrarSesion}
+              style={{
+                backgroundColor: "white", color: "#00482B", border: "none",
+                borderRadius: "30px", padding: "12px 28px", fontWeight: "700",
+                fontSize: "15px", cursor: "pointer", transition: "all 0.3s",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                visibility: esDocente ? "visible" : "hidden"
+              }}
+              onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
+              onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+            >
+              CERRAR SESIÓN
+            </button>
+          </div>
         )}
       </nav>
 
@@ -411,6 +397,16 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
           backgroundColor: "#00612F", display: "flex", flexDirection: "column",
           padding: "16px 24px", gap: "16px", zIndex: 100,
         }}>
+          {/* Saludo móvil */}
+          {esDocente && (
+            <span style={{
+              color: "white", fontWeight: "600", fontSize: "14px",
+              backgroundColor: "rgba(255,255,255,0.15)",
+              padding: "10px 16px", borderRadius: "10px", textAlign: "center",
+            }}>
+              👋 Hola, {usuario?.nombre}
+            </span>
+          )}
           {[
             { label: "Inicio", key: "inicio" },
             { label: "¿Qué hacemos?", key: "que" },
@@ -477,12 +473,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
             {!dimensionSeleccionada && (
               <div style={{ padding: isMobile ? "30px 20px" : "40px 80px", textAlign: "center" }}>
                 <h2 style={{ color: "#00482B", marginBottom: "50px" }}>Selecciona una categoría</h2>
-                <div style={{
-                  display: "flex",
-                  gap: isMobile ? "16px" : "40px",
-                  justifyContent: "center",
-                  flexWrap: "wrap",
-                }}>
+                <div style={{ display: "flex", gap: isMobile ? "16px" : "40px", justifyContent: "center", flexWrap: "wrap" }}>
                   {DIMENSIONES.map((dim) => (
                     <div
                       key={dim.id}
@@ -537,8 +528,7 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                     gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
                     gap: isMobile ? "20px" : "30px",
                     padding: isMobile ? "0 16px" : "0 130px",
-                    maxWidth: "1000px",
-                    margin: "0 auto"
+                    maxWidth: "1000px", margin: "0 auto"
                   }}>
                     {opciones.map((opcion) => {
                       const esElegida = selectedOption === opcion.id_opcion;
@@ -653,16 +643,12 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
       {/* FOOTER */}
       <footer style={{
         backgroundColor: "#00482B", color: "white",
-        padding: isMobile ? "20px" : "30px 130px",
-        marginTop: "80px"
+        padding: isMobile ? "20px" : "30px 130px", marginTop: "80px"
       }}>
         <div style={{
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: isMobile ? "16px" : "0",
-          textAlign: isMobile ? "center" : "right",
+          display: "flex", flexDirection: isMobile ? "column" : "row",
+          justifyContent: "space-between", alignItems: "center",
+          gap: isMobile ? "16px" : "0", textAlign: isMobile ? "center" : "right",
         }}>
           <img src={LogoUdec} alt="UDEC" style={{ width: isMobile ? "160px" : "250px" }} />
           <div style={{ fontSize: "12px", lineHeight: "1.8" }}>

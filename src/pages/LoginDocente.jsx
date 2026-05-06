@@ -4,7 +4,7 @@ import docenteIcon from "../assets/User.svg";
 import LogoUdec from "../assets/udecblanco.png";
 import RegisterDocente from "./RegisterDocente";
 
-export default function LoginDocente({ onLogin, onAnonimo }) {
+export default function LoginDocente({ onLogin, onAnonimo, onVolver }) {
   const [correo, setCorreo] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [mostrarRegistro, setMostrarRegistro] = useState(false);
@@ -13,9 +13,8 @@ export default function LoginDocente({ onLogin, onAnonimo }) {
   if (mostrarRegistro) {
     return (
       <RegisterDocente
-        onRegistroExitoso={() => {
-          setMostrarRegistro(false); // 👈 vuelve al login sin iniciar sesión
-        }}
+        onRegistroExitoso={() => setMostrarRegistro(false)}
+        onVolverLogin={() => setMostrarRegistro(false)}
       />
     );
   }
@@ -83,10 +82,10 @@ export default function LoginDocente({ onLogin, onAnonimo }) {
         animation: "slideInLeft 0.6s ease forwards"
       }}>
         <img
-         src={logo}
-         alt="Praxis"
-         style={{ width: "200px", marginBottom: "50px", cursor: "pointer" }}
-         onClick={() => window.location.href = "/"}
+          src={logo}
+          alt="Praxis"
+          style={{ width: "200px", marginBottom: "50px", cursor: "pointer" }}
+          onClick={() => window.location.href = "/"}
         />
 
         <svg width="120" height="160" viewBox="0 0 120 160" style={{ marginBottom: "30px" }}>
@@ -145,6 +144,32 @@ export default function LoginDocente({ onLogin, onAnonimo }) {
         padding: "60px 80px",
         animation: "slideInRight 0.6s ease forwards"
       }}>
+
+        {/* Botón volver al inicio */}
+        <div style={{ width: "100%", maxWidth: "380px", marginBottom: "8px" }}>
+          <button
+            type="button"
+            onClick={onVolver}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#999",
+              cursor: "pointer",
+              fontSize: "13px",
+              fontFamily: "Montserrat, sans-serif",
+              padding: "0",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              textDecoration: "none",
+              transition: "color 0.2s"
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = "#007B3E"}
+            onMouseLeave={(e) => e.currentTarget.style.color = "#999"}
+          >
+            ← Volver al inicio
+          </button>
+        </div>
 
         <div style={{
           display: "flex",

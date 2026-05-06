@@ -12,21 +12,39 @@ const useIsMobile = () => {
   return isMobile;
 };
 
+const MUNICIPIOS = [
+  { id: 1,  nombre: "Chía" },
+  { id: 2,  nombre: "Cajicá" },
+  { id: 3,  nombre: "Zipaquirá" },
+  { id: 4,  nombre: "Sopó" },
+  { id: 5,  nombre: "Cota" },
+  { id: 6,  nombre: "Tenjo" },
+  { id: 7,  nombre: "Tabio" },
+  { id: 8,  nombre: "Tocancipá" },
+  { id: 9,  nombre: "Gachancipá" },
+  { id: 10, nombre: "Cogua" },
+];
+
 export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   const [form, setForm] = useState({
     nombre: "", apellido: "", correo: "", contraseña: "", confirmar: "",
     anos_experiencia: "", nombre_institucion: "", tipo_institucion: "", municipio: ""
   });
+  const [otroMunicipio, setOtroMunicipio] = useState("");
   const [cargando, setCargando] = useState(false);
   const [completo, setCompleto] = useState(false);
   const isMobile = useIsMobile();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+  const municipioEsOtro = form.municipio === "otro";
+
   useEffect(() => {
-    const todosLlenos = Object.values(form).every((v) => v.trim() !== "");
-    setCompleto(todosLlenos);
-  }, [form]);
+    const camposBase = { ...form };
+    const todosLlenos = Object.values(camposBase).every((v) => v.trim() !== "");
+    const otroOk = municipioEsOtro ? otroMunicipio.trim() !== "" : true;
+    setCompleto(todosLlenos && otroOk);
+  }, [form, otroMunicipio, municipioEsOtro]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,19 +52,43 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
     if (!form.tipo_institucion || !form.municipio || !form.nombre_institucion) {
       alert("Complete los campos de institución"); return;
     }
+    if (municipioEsOtro && !otroMunicipio.trim()) {
+      alert("Escribe el nombre del municipio"); return;
+    }
+
     setCargando(true);
     try {
+      // Si es "otro municipio", crearlo primero en la BD
+      let id_municipio_final;
+
+      if (municipioEsOtro) {
+        const munRes = await fetch("https://backend-isu.onrender.com/api/municipios", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre: otroMunicipio.trim() })
+        });
+        const munData = await munRes.json();
+        if (!munRes.ok || !munData.id_municipio) {
+          alert("Error al registrar el municipio"); return;
+        }
+        id_municipio_final = munData.id_municipio;
+      } else {
+        id_municipio_final = Number(form.municipio);
+      }
+
+      // Crear institución
       const institucionRes = await fetch("https://backend-isu.onrender.com/api/instituciones", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nombre_institucion: form.nombre_institucion,
-          id_municipio: Number(form.municipio),
+          id_municipio: id_municipio_final,
           id_tipo_institucion: Number(form.tipo_institucion)
         })
       });
       const institucionData = await institucionRes.json();
       if (!institucionRes.ok || !institucionData.id_institucion) { alert("Error al crear la institución"); return; }
 
+      // Crear usuario
       const usuarioRes = await fetch("https://backend-isu.onrender.com/api/usuarios", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -68,27 +110,26 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
     <div style={{
       minHeight: "100vh",
       display: "flex",
-      flexDirection: isMobile ? "column" : "row", // 👈 columna en móvil
+      flexDirection: isMobile ? "column" : "row",
       fontFamily: "Montserrat, sans-serif"
     }}>
 
       {/* PANEL IZQUIERDO — verde */}
       <div style={{
-        width: isMobile ? "100%" : "45%", // 👈
+        width: isMobile ? "100%" : "45%",
         backgroundColor: "#00482B",
         display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
-        padding: isMobile ? "30px 24px" : "60px 50px", // 👈
+        padding: isMobile ? "30px 24px" : "60px 50px",
         animation: "slideInLeft 0.6s ease forwards"
       }}>
         <img
           src={logo}
           alt="Praxis"
-          style={{ width: isMobile ? "140px" : "200px", marginBottom: "20px", cursor: "pointer" }} // 👈
+          style={{ width: isMobile ? "140px" : "200px", marginBottom: "20px", cursor: "pointer" }}
           onClick={() => window.location.href = "/"}
         />
 
-        {/* MUÑEQUITO — oculto en móvil para ahorrar espacio */}
         {!isMobile && (
           <div style={{ position: "relative", marginBottom: "20px" }}>
             <svg width="130" height="180" viewBox="0 0 130 180" style={{ overflow: "visible" }}>
@@ -146,7 +187,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
 
         <h2 style={{
           color: "white",
-          fontSize: isMobile ? "18px" : (completo ? "22px" : "20px"), // 👈
+          fontSize: isMobile ? "18px" : (completo ? "22px" : "20px"),
           fontWeight: "700", textAlign: "center", marginBottom: "8px",
           transition: "font-size 0.3s ease",
           animation: completo ? "pulsoTexto 1.4s ease-in-out infinite" : "none"
@@ -154,7 +195,6 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
           {completo ? "¡Todo listo, profe! 🎉" : "¡Crea tu cuenta!"}
         </h2>
 
-        {/* Descripción — más corta en móvil */}
         {!isMobile && (
           <p style={{
             color: "rgba(255,255,255,0.75)", fontSize: "14px", textAlign: "center",
@@ -171,29 +211,49 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
 
       {/* PANEL DERECHO — blanco */}
       <div style={{
-        width: isMobile ? "100%" : "55%", // 👈
+        width: isMobile ? "100%" : "55%",
         backgroundColor: "#FFFFFF",
         display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
-        padding: isMobile ? "30px 20px" : "40px 70px", // 👈
+        padding: isMobile ? "30px 20px" : "40px 70px",
         animation: "slideInRight 0.6s ease forwards",
         overflowY: "auto"
       }}>
+
+        {/* Botón volver al login */}
+        <div style={{ width: "100%", maxWidth: isMobile ? "100%" : "480px", marginBottom: "8px" }}>
+          <button
+            type="button"
+            onClick={onVolverLogin}
+            style={{
+              background: "none", border: "none", color: "#999", cursor: "pointer",
+              fontSize: "13px", fontFamily: "Montserrat, sans-serif", padding: "0",
+              display: "flex", alignItems: "center", gap: "4px", transition: "color 0.2s"
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = "#007B3E"}
+            onMouseLeave={(e) => e.currentTarget.style.color = "#999"}
+          >
+            ← Volver al login
+          </button>
+        </div>
+
         <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
             <circle cx="16" cy="10" r="6" fill="#00482B" />
             <path d="M4 28c0-6.627 5.373-12 12-12s12 5.373 12 12"
               stroke="#00482B" strokeWidth="2.5" fill="none" strokeLinecap="round" />
           </svg>
-          <h2 style={{ color: "#00482B", fontWeight: "700", margin: 0, fontSize: isMobile ? "18px" : "22px" }}>Registrarme</h2>
+          <h2 style={{ color: "#00482B", fontWeight: "700", margin: 0, fontSize: isMobile ? "18px" : "22px" }}>
+            Registrarme
+          </h2>
         </div>
 
         <form onSubmit={handleSubmit} style={{
           display: "grid",
-          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", // 👈 1 columna en móvil
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
           gap: "16px",
           width: "100%",
-          maxWidth: isMobile ? "100%" : "480px" // 👈
+          maxWidth: isMobile ? "100%" : "480px"
         }}>
           <Field label="Nombre" isMobile={isMobile}>
             <input name="nombre" type="text" placeholder="Tu nombre" onChange={handleChange} />
@@ -216,20 +276,38 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
           <Field label="Nombre institución" isMobile={isMobile}>
             <input name="nombre_institucion" type="text" placeholder="Ej. Colegio San Juan" onChange={handleChange} />
           </Field>
+
+          {/* TIPO DE INSTITUCIÓN — Oficial / Privada */}
           <Field label="Tipo de institución" isMobile={isMobile}>
-            <select name="tipo_institucion" onChange={handleChange}>
+            <select name="tipo_institucion" onChange={handleChange} value={form.tipo_institucion}>
               <option value="">Seleccionar...</option>
-              <option value="1">Pública</option>
+              <option value="1">Oficial</option>
               <option value="2">Privada</option>
             </select>
           </Field>
-          <Field label="Municipio" full isMobile={isMobile}> {/* 👈 full en móvil para que ocupe todo */}
-            <select name="municipio" onChange={handleChange}>
+
+          {/* MUNICIPIO — con opción "Otro" */}
+          <Field label="Municipio" full isMobile={isMobile}>
+            <select name="municipio" onChange={handleChange} value={form.municipio}>
               <option value="">Seleccionar...</option>
-              {["Chía","Cajicá","Zipaquirá","Sopó","Cota","Tenjo","Tabio","Tocancipá","Gachancipá","Cogua"]
-                .map((m, i) => <option key={i + 1} value={i + 1}>{m}</option>)}
+              {MUNICIPIOS.map((m) => (
+                <option key={m.id} value={m.id}>{m.nombre}</option>
+              ))}
+              <option value="otro">Otro municipio...</option>
             </select>
           </Field>
+
+          {/* INPUT extra si elige "Otro" */}
+          {municipioEsOtro && (
+            <Field label="Nombre del municipio" full isMobile={isMobile}>
+              <input
+                type="text"
+                placeholder="Escribe el municipio"
+                value={otroMunicipio}
+                onChange={(e) => setOtroMunicipio(e.target.value)}
+              />
+            </Field>
+          )}
 
           <button
             type="submit"
@@ -262,6 +340,14 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
               border: "2px solid #007B3E", padding: "14px", borderRadius: "12px",
               fontSize: "15px", fontWeight: "600", cursor: "pointer",
               fontFamily: "Montserrat, sans-serif"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#007B3E";
+              e.currentTarget.style.color = "white";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "white";
+              e.currentTarget.style.color = "#007B3E";
             }}
           >
             ¿Ya tienes cuenta? Inicia sesión
@@ -331,7 +417,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
 function Field({ label, children, full, isMobile }) {
   return (
     <div style={{
-      gridColumn: (full || isMobile) ? "1 / -1" : "auto", // 👈 en móvil todo ocupa ancho completo
+      gridColumn: (full || isMobile) ? "1 / -1" : "auto",
       display: "flex", flexDirection: "column", gap: "7px"
     }}>
       <label style={{ fontSize: "12px", fontWeight: "600", color: "#555" }}>{label}</label>

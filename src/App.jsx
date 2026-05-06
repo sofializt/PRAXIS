@@ -90,12 +90,18 @@ export default function App() {
       <LoginDocente
         onLogin={(u) => { setUsuario(u); setPantalla("escenarios"); }}
         onAnonimo={crearAnonimo}
+        onVolver={() => setPantalla("inicio")}
       />
     );
   }
 
   if (pantalla === "registro") {
-    return <RegisterDocente onRegistroExitoso={() => setPantalla("login")} />;
+    return (
+      <RegisterDocente
+        onRegistroExitoso={() => setPantalla("login")}
+        onVolverLogin={() => setPantalla("login")}
+      />
+    );
   }
 
   return null;

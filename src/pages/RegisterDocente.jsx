@@ -25,19 +25,27 @@ const MUNICIPIOS = [
   { id: 10, nombre: "Cogua" },
 ];
 
-// Si usaste Opción B (sin tabla), cambia esto por un array estático
-// y en handleSubmit envía nivel_educativo como string en vez de id
 const NIVELES_EDUCATIVOS = [
   { id: 1, nombre: "Jardín infantil o guardería" },
   { id: 2, nombre: "Colegio o escuela" },
   { id: 3, nombre: "Universidad" },
 ];
 
+const PAISES = [
+  { id: 1, nombre: "Colombia" },
+  { id: 2, nombre: "Venezuela" },
+  { id: 3, nombre: "Ecuador" },
+  { id: 4, nombre: "Perú" },
+  { id: 5, nombre: "México" },
+  { id: 6, nombre: "Argentina" },
+  { id: 7, nombre: "Otro" },
+];
+
 export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   const [form, setForm] = useState({
     nombre: "", apellido: "", correo: "", contraseña: "", confirmar: "",
     anos_experiencia: "", nombre_institucion: "", tipo_institucion: "",
-    nivel_educativo: "", municipio: ""
+    nivel_educativo: "", municipio: "", pais: ""
   });
   const [otroMunicipio, setOtroMunicipio] = useState("");
   const [cargando, setCargando] = useState(false);
@@ -58,7 +66,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.contraseña !== form.confirmar) { alert("Las contraseñas no coinciden"); return; }
-    if (!form.tipo_institucion || !form.nivel_educativo || !form.municipio || !form.nombre_institucion) {
+    if (!form.tipo_institucion || !form.nivel_educativo || !form.municipio || !form.nombre_institucion || !form.pais) {
       alert("Complete los campos de institución"); return;
     }
     if (municipioEsOtro && !otroMunicipio.trim()) {
@@ -67,7 +75,6 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
 
     setCargando(true);
     try {
-      // Si es "otro municipio", crearlo primero en la BD
       let id_municipio_final;
 
       if (municipioEsOtro) {
@@ -85,14 +92,15 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
         id_municipio_final = Number(form.municipio);
       }
 
-      // Crear institución (ahora incluye id_nivel_educativo)
+      // Crear institución (incluye id_nivel_educativo e id_pais)
       const institucionRes = await fetch("https://backend-isu.onrender.com/api/instituciones", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nombre_institucion: form.nombre_institucion,
           id_municipio: id_municipio_final,
           id_tipo_institucion: Number(form.tipo_institucion),
-          id_nivel_educativo: Number(form.nivel_educativo)   // ← nuevo campo
+          id_nivel_educativo: Number(form.nivel_educativo),
+          id_pais: Number(form.pais)          // ← nuevo
         })
       });
       const institucionData = await institucionRes.json();
@@ -296,7 +304,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
             </select>
           </Field>
 
-          {/* NIVEL EDUCATIVO — nuevo campo, al lado de tipo institución */}
+          {/* NIVEL EDUCATIVO */}
           <Field label="Nivel educativo" isMobile={isMobile}>
             <select name="nivel_educativo" onChange={handleChange} value={form.nivel_educativo}>
               <option value="">Seleccionar...</option>
@@ -306,8 +314,18 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
             </select>
           </Field>
 
+          {/* PAÍS — nuevo campo */}
+          <Field label="País" isMobile={isMobile}>
+            <select name="pais" onChange={handleChange} value={form.pais}>
+              <option value="">Seleccionar...</option>
+              {PAISES.map((p) => (
+                <option key={p.id} value={p.id}>{p.nombre}</option>
+              ))}
+            </select>
+          </Field>
+
           {/* MUNICIPIO */}
-          <Field label="Municipio" full isMobile={isMobile}>
+          <Field label="Municipio" isMobile={isMobile}>
             <select name="municipio" onChange={handleChange} value={form.municipio}>
               <option value="">Seleccionar...</option>
               {MUNICIPIOS.map((m) => (

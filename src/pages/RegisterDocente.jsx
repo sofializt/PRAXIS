@@ -25,10 +25,19 @@ const MUNICIPIOS = [
   { id: 10, nombre: "Cogua" },
 ];
 
+// Si usaste Opción B (sin tabla), cambia esto por un array estático
+// y en handleSubmit envía nivel_educativo como string en vez de id
+const NIVELES_EDUCATIVOS = [
+  { id: 1, nombre: "Jardín infantil o guardería" },
+  { id: 2, nombre: "Colegio o escuela" },
+  { id: 3, nombre: "Universidad" },
+];
+
 export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   const [form, setForm] = useState({
     nombre: "", apellido: "", correo: "", contraseña: "", confirmar: "",
-    anos_experiencia: "", nombre_institucion: "", tipo_institucion: "", municipio: ""
+    anos_experiencia: "", nombre_institucion: "", tipo_institucion: "",
+    nivel_educativo: "", municipio: ""
   });
   const [otroMunicipio, setOtroMunicipio] = useState("");
   const [cargando, setCargando] = useState(false);
@@ -49,7 +58,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.contraseña !== form.confirmar) { alert("Las contraseñas no coinciden"); return; }
-    if (!form.tipo_institucion || !form.municipio || !form.nombre_institucion) {
+    if (!form.tipo_institucion || !form.nivel_educativo || !form.municipio || !form.nombre_institucion) {
       alert("Complete los campos de institución"); return;
     }
     if (municipioEsOtro && !otroMunicipio.trim()) {
@@ -76,13 +85,14 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
         id_municipio_final = Number(form.municipio);
       }
 
-      // Crear institución
+      // Crear institución (ahora incluye id_nivel_educativo)
       const institucionRes = await fetch("https://backend-isu.onrender.com/api/instituciones", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nombre_institucion: form.nombre_institucion,
           id_municipio: id_municipio_final,
-          id_tipo_institucion: Number(form.tipo_institucion)
+          id_tipo_institucion: Number(form.tipo_institucion),
+          id_nivel_educativo: Number(form.nivel_educativo)   // ← nuevo campo
         })
       });
       const institucionData = await institucionRes.json();
@@ -277,7 +287,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
             <input name="nombre_institucion" type="text" placeholder="Ej. Colegio San Juan" onChange={handleChange} />
           </Field>
 
-          {/* TIPO DE INSTITUCIÓN — Oficial / Privada */}
+          {/* TIPO DE INSTITUCIÓN */}
           <Field label="Tipo de institución" isMobile={isMobile}>
             <select name="tipo_institucion" onChange={handleChange} value={form.tipo_institucion}>
               <option value="">Seleccionar...</option>
@@ -286,7 +296,17 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
             </select>
           </Field>
 
-          {/* MUNICIPIO — con opción "Otro" */}
+          {/* NIVEL EDUCATIVO — nuevo campo, al lado de tipo institución */}
+          <Field label="Nivel educativo" isMobile={isMobile}>
+            <select name="nivel_educativo" onChange={handleChange} value={form.nivel_educativo}>
+              <option value="">Seleccionar...</option>
+              {NIVELES_EDUCATIVOS.map((n) => (
+                <option key={n.id} value={n.id}>{n.nombre}</option>
+              ))}
+            </select>
+          </Field>
+
+          {/* MUNICIPIO */}
           <Field label="Municipio" full isMobile={isMobile}>
             <select name="municipio" onChange={handleChange} value={form.municipio}>
               <option value="">Seleccionar...</option>
@@ -297,7 +317,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
             </select>
           </Field>
 
-          {/* INPUT extra si elige "Otro" */}
+          {/* INPUT extra si elige "Otro" municipio */}
           {municipioEsOtro && (
             <Field label="Nombre del municipio" full isMobile={isMobile}>
               <input

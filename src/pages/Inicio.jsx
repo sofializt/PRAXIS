@@ -14,7 +14,7 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonimo }) {
+export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonimo, onCerrarSesion }) {
   const [menuActivo, setMenuActivo] = useState("inicio");
   const [animar, setAnimar] = useState(true);
   const [animandoProfesor, setAnimandoProfesor] = useState(false);
@@ -52,6 +52,13 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
   const handleAnonimo = () => {
     if (cargandoAnonimo) return;
     onJuzga();
+  };
+
+  const cerrarSesion = () => {
+    localStorage.removeItem("id_usuario");
+    localStorage.removeItem("id_rol");
+    localStorage.removeItem("usuario");
+    if (onCerrarSesion) onCerrarSesion();
   };
 
   return (
@@ -210,17 +217,32 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
           </div>
         )}
 
-        {/* Derecha navbar desktop: saludo si es docente, botón si no */}
+        {/* Derecha navbar desktop */}
         {!isMobile && (
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             {esDocente ? (
-              <span style={{
-                color: "white", fontWeight: "600", fontSize: "14px",
-                backgroundColor: "rgba(255,255,255,0.15)",
-                padding: "10px 20px", borderRadius: "30px",
-              }}>
-                👋 Hola, {usuario.nombre}
-              </span>
+              <>
+                <span style={{
+                  color: "white", fontWeight: "600", fontSize: "14px",
+                  backgroundColor: "rgba(255,255,255,0.15)",
+                  padding: "10px 20px", borderRadius: "30px",
+                }}>
+                  👋 Hola, {usuario.nombre}
+                </span>
+                <button
+                  onClick={cerrarSesion}
+                  style={{
+                    backgroundColor: "white", color: "#00482B", border: "none",
+                    borderRadius: "30px", padding: "12px 28px", fontWeight: "700",
+                    fontSize: "15px", cursor: "pointer", transition: "all 0.3s",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
+                  onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+                >
+                  CERRAR SESIÓN
+                </button>
+              </>
             ) : (
               <button onClick={handleSoyProfesor} disabled={animandoProfesor}
                 style={{
@@ -243,7 +265,6 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
           backgroundColor: "#00612F", display: "flex", flexDirection: "column",
           padding: "16px 24px", gap: "16px", zIndex: 100,
         }}>
-          {/* Saludo móvil si es docente */}
           {esDocente && (
             <span style={{
               color: "white", fontWeight: "600", fontSize: "14px",
@@ -268,8 +289,16 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
               {label}
             </span>
           ))}
-          {/* Botón SOY PROFESOR solo si no es docente */}
-          {!esDocente && (
+          {esDocente ? (
+            <button onClick={() => { setMenuAbierto(false); cerrarSesion(); }}
+              style={{
+                backgroundColor: "white", color: "#00482B", border: "none",
+                borderRadius: "30px", padding: "12px", fontWeight: "700",
+                fontSize: "15px", cursor: "pointer",
+              }}>
+              CERRAR SESIÓN
+            </button>
+          ) : (
             <button onClick={() => { setMenuAbierto(false); handleSoyProfesor(); }}
               style={{
                 backgroundColor: "white", color: "#00482B", border: "none",

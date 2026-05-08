@@ -87,6 +87,7 @@ export default function App() {
         onJuzga={crearAnonimo}
         usuario={usuario}
         cargandoAnonimo={cargandoAnonimo}
+        onCerrarSesion={cerrarSesion}
       />
     );
   }

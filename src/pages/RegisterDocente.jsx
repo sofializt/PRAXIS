@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import logo from "../assets/praxis.svg";
 import LogoUdec from "../assets/udecblanco.png";
 
@@ -32,14 +32,162 @@ const NIVELES_EDUCATIVOS = [
 ];
 
 const PAISES = [
-  { id: 1, nombre: "Colombia" },
-  { id: 2, nombre: "Venezuela" },
-  { id: 3, nombre: "Ecuador" },
-  { id: 4, nombre: "Perú" },
-  { id: 5, nombre: "México" },
-  { id: 6, nombre: "Argentina" },
-  { id: 7, nombre: "Otro" },
+  { id: 6,  nombre: "Argentina" },
+  { id: 8,  nombre: "Bolivia" },
+  { id: 9,  nombre: "Brasil" },
+  { id: 10, nombre: "Chile" },
+  { id: 1,  nombre: "Colombia" },
+  { id: 11, nombre: "Costa Rica" },
+  { id: 12, nombre: "Cuba" },
+  { id: 3,  nombre: "Ecuador" },
+  { id: 14, nombre: "El Salvador" },
+  { id: 15, nombre: "España" },
+  { id: 16, nombre: "Guatemala" },
+  { id: 17, nombre: "Guinea Ecuatorial" },
+  { id: 18, nombre: "Honduras" },
+  { id: 5,  nombre: "México" },
+  { id: 19, nombre: "Nicaragua" },
+  { id: 20, nombre: "Panamá" },
+  { id: 21, nombre: "Paraguay" },
+  { id: 4,  nombre: "Perú" },
+  { id: 22, nombre: "Portugal" },
+  { id: 23, nombre: "Puerto Rico" },
+  { id: 13, nombre: "República Dominicana" },
+  { id: 24, nombre: "Uruguay" },
+  { id: 2,  nombre: "Venezuela" },
 ];
+
+// Componente de búsqueda de país con autocompletado
+function PaisSearchField({ value, onChange, isMobile }) {
+  const [busqueda, setBusqueda] = useState("");
+  const [abierto, setAbierto] = useState(false);
+  const [paisSeleccionado, setPaisSeleccionado] = useState(null);
+  const ref = useRef(null);
+
+  // Cerrar dropdown al hacer click afuera
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setAbierto(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const paisesFiltrados = busqueda.trim() === ""
+    ? PAISES
+    : PAISES.filter((p) =>
+        p.nombre.toLowerCase().startsWith(busqueda.toLowerCase()) ||
+        p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+      );
+
+  const seleccionar = (pais) => {
+    setPaisSeleccionado(pais);
+    setBusqueda(pais.nombre);
+    setAbierto(false);
+    onChange(String(pais.id));
+  };
+
+  const handleInput = (e) => {
+    setBusqueda(e.target.value);
+    setAbierto(true);
+    if (!e.target.value) {
+      setPaisSeleccionado(null);
+      onChange("");
+    }
+  };
+
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <input
+        type="text"
+        placeholder="Escribe para buscar..."
+        value={busqueda}
+        onChange={handleInput}
+        onFocus={() => setAbierto(true)}
+        autoComplete="off"
+        style={{
+          padding: "13px 40px 13px 16px",
+          borderRadius: "10px",
+          border: `2px solid ${paisSeleccionado ? "#007B3E" : "#E0E0E0"}`,
+          fontSize: "14px",
+          fontFamily: "Montserrat, sans-serif",
+          outline: "none",
+          width: "100%",
+          background: "#fff",
+          boxSizing: "border-box",
+          transition: "border .3s",
+        }}
+      />
+      {/* Ícono lupa / check */}
+      <span style={{
+        position: "absolute", right: "14px", top: "50%",
+        transform: "translateY(-50%)", fontSize: "16px",
+        pointerEvents: "none", color: paisSeleccionado ? "#007B3E" : "#aaa"
+      }}>
+        {paisSeleccionado ? "✓" : "🔍"}
+      </span>
+
+      {abierto && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0,
+          backgroundColor: "white",
+          border: "2px solid #007B3E",
+          borderRadius: "10px",
+          maxHeight: "200px",
+          overflowY: "auto",
+          zIndex: 999,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+        }}>
+          {paisesFiltrados.length === 0 ? (
+            <div style={{ padding: "12px 16px", color: "#999", fontSize: "13px" }}>
+              No se encontraron resultados
+            </div>
+          ) : (
+            paisesFiltrados.map((pais) => (
+              <div
+                key={pais.id}
+                onMouseDown={() => seleccionar(pais)}
+                style={{
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  backgroundColor: value === String(pais.id) ? "#E8F5EE" : "white",
+                  color: value === String(pais.id) ? "#007B3E" : "#333",
+                  fontWeight: value === String(pais.id) ? "600" : "400",
+                  fontFamily: "Montserrat, sans-serif",
+                  transition: "background 0.15s",
+                  borderBottom: "1px solid #f0f0f0",
+                }}
+                onMouseEnter={(e) => { if (value !== String(pais.id)) e.currentTarget.style.backgroundColor = "#F5F5F5"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = value === String(pais.id) ? "#E8F5EE" : "white"; }}
+              >
+                {pais.nombre}
+              </div>
+            ))
+          )}
+          {/* Opción "Otro" al final */}
+          <div
+            onMouseDown={() => seleccionar({ id: "otro", nombre: "Otro" })}
+            style={{
+              padding: "10px 16px",
+              fontSize: "14px",
+              cursor: "pointer",
+              color: "#007B3E",
+              fontWeight: "600",
+              fontFamily: "Montserrat, sans-serif",
+              borderTop: "1px solid #E0E0E0",
+              backgroundColor: value === "otro" ? "#E8F5EE" : "white",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#F5F5F5"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = value === "otro" ? "#E8F5EE" : "white"; }}
+          >
+            + Otro país...
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   const [form, setForm] = useState({
@@ -48,6 +196,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
     nivel_educativo: "", municipio: "", pais: ""
   });
   const [otroMunicipio, setOtroMunicipio] = useState("");
+  const [otroPais, setOtroPais] = useState("");
   const [cargando, setCargando] = useState(false);
   const [completo, setCompleto] = useState(false);
   const isMobile = useIsMobile();
@@ -55,13 +204,15 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const municipioEsOtro = form.municipio === "otro";
+  const paisEsOtro = form.pais === "otro";
 
   useEffect(() => {
     const camposBase = { ...form };
     const todosLlenos = Object.values(camposBase).every((v) => v.trim() !== "");
-    const otroOk = municipioEsOtro ? otroMunicipio.trim() !== "" : true;
-    setCompleto(todosLlenos && otroOk);
-  }, [form, otroMunicipio, municipioEsOtro]);
+    const otroMunOk = municipioEsOtro ? otroMunicipio.trim() !== "" : true;
+    const otroPaisOk = paisEsOtro ? otroPais.trim() !== "" : true;
+    setCompleto(todosLlenos && otroMunOk && otroPaisOk);
+  }, [form, otroMunicipio, municipioEsOtro, otroPais, paisEsOtro]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,14 +220,13 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
     if (!form.tipo_institucion || !form.nivel_educativo || !form.municipio || !form.nombre_institucion || !form.pais) {
       alert("Complete los campos de institución"); return;
     }
-    if (municipioEsOtro && !otroMunicipio.trim()) {
-      alert("Escribe el nombre del municipio"); return;
-    }
+    if (municipioEsOtro && !otroMunicipio.trim()) { alert("Escribe el nombre del municipio"); return; }
+    if (paisEsOtro && !otroPais.trim()) { alert("Escribe el nombre del país"); return; }
 
     setCargando(true);
     try {
+      // Resolver municipio
       let id_municipio_final;
-
       if (municipioEsOtro) {
         const munRes = await fetch("https://backend-isu.onrender.com/api/municipios", {
           method: "POST",
@@ -84,15 +234,28 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
           body: JSON.stringify({ nombre: otroMunicipio.trim() })
         });
         const munData = await munRes.json();
-        if (!munRes.ok || !munData.id_municipio) {
-          alert("Error al registrar el municipio"); return;
-        }
+        if (!munRes.ok || !munData.id_municipio) { alert("Error al registrar el municipio"); return; }
         id_municipio_final = munData.id_municipio;
       } else {
         id_municipio_final = Number(form.municipio);
       }
 
-      // Crear institución (incluye id_nivel_educativo e id_pais)
+      // Resolver país
+      let id_pais_final;
+      if (paisEsOtro) {
+        const paisRes = await fetch("https://backend-isu.onrender.com/api/paises", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre: otroPais.trim() })
+        });
+        const paisData = await paisRes.json();
+        if (!paisRes.ok || !paisData.id_pais) { alert("Error al registrar el país"); return; }
+        id_pais_final = paisData.id_pais;
+      } else {
+        id_pais_final = Number(form.pais);
+      }
+
+      // Crear institución
       const institucionRes = await fetch("https://backend-isu.onrender.com/api/instituciones", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -100,7 +263,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
           id_municipio: id_municipio_final,
           id_tipo_institucion: Number(form.tipo_institucion),
           id_nivel_educativo: Number(form.nivel_educativo),
-          id_pais: Number(form.pais)          // ← nuevo
+          id_pais: id_pais_final
         })
       });
       const institucionData = await institucionRes.json();
@@ -238,7 +401,6 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
         overflowY: "auto"
       }}>
 
-        {/* Botón volver al login */}
         <div style={{ width: "100%", maxWidth: isMobile ? "100%" : "480px", marginBottom: "8px" }}>
           <button
             type="button"
@@ -295,7 +457,6 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
             <input name="nombre_institucion" type="text" placeholder="Ej. Colegio San Juan" onChange={handleChange} />
           </Field>
 
-          {/* TIPO DE INSTITUCIÓN */}
           <Field label="Tipo de institución" isMobile={isMobile}>
             <select name="tipo_institucion" onChange={handleChange} value={form.tipo_institucion}>
               <option value="">Seleccionar...</option>
@@ -304,7 +465,6 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
             </select>
           </Field>
 
-          {/* NIVEL EDUCATIVO */}
           <Field label="Nivel educativo" isMobile={isMobile}>
             <select name="nivel_educativo" onChange={handleChange} value={form.nivel_educativo}>
               <option value="">Seleccionar...</option>
@@ -314,15 +474,26 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
             </select>
           </Field>
 
-          {/* PAÍS — nuevo campo */}
+          {/* PAÍS con buscador */}
           <Field label="País" isMobile={isMobile}>
-            <select name="pais" onChange={handleChange} value={form.pais}>
-              <option value="">Seleccionar...</option>
-              {PAISES.map((p) => (
-                <option key={p.id} value={p.id}>{p.nombre}</option>
-              ))}
-            </select>
+            <PaisSearchField
+              value={form.pais}
+              onChange={(val) => setForm((prev) => ({ ...prev, pais: val }))}
+              isMobile={isMobile}
+            />
           </Field>
+
+          {/* Input extra si elige "Otro" país */}
+          {paisEsOtro && (
+            <Field label="Nombre del país" isMobile={isMobile}>
+              <input
+                type="text"
+                placeholder="Escribe el país"
+                value={otroPais}
+                onChange={(e) => setOtroPais(e.target.value)}
+              />
+            </Field>
+          )}
 
           {/* MUNICIPIO */}
           <Field label="Municipio" isMobile={isMobile}>
@@ -335,7 +506,7 @@ export default function RegisterDocente({ onRegistroExitoso, onVolverLogin }) {
             </select>
           </Field>
 
-          {/* INPUT extra si elige "Otro" municipio */}
+          {/* Input extra si elige "Otro" municipio */}
           {municipioEsOtro && (
             <Field label="Nombre del municipio" full isMobile={isMobile}>
               <input

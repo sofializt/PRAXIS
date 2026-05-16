@@ -3,6 +3,7 @@ import logo from "../assets/praxis.svg";
 import LogoUdec from "../assets/udecblanco.png";
 import qr from "../assets/qr.png";
 import fotoHugo from "../assets/hugo.jpg";
+import fotoBlanca from "../assets/blanca.jpg";
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -452,7 +453,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
 
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: "18px", marginBottom: "56px" }}>
               {[
-                { initials: "BB", nombre: "Blanca Luz Buitrago Sánchez", rol: "Colaboradora", desc: "Integrante del equipo de investigación y desarrollo del proyecto Praxis en la Universidad de Cundinamarca.", avatarColor: "#00A99D", avatarBg: "#c1eae7" },
+                { initials: "BB", nombre: "Blanca Luz Buitrago Sánchez", rol: "Colaboradora", desc: "Integrante del equipo de investigación y desarrollo del proyecto Praxis en la Universidad de Cundinamarca.", avatarColor: "#00A99D", avatarBg: "#c1eae7", foto: fotoBlanca, researchgate: "https://www.researchgate.net/profile/Blanca-Buitrago-3" },
                 { initials: "JD", nombre: "John Jairo Durán", rol: "Colaborador", desc: "Integrante del equipo de investigación y desarrollo del proyecto Praxis en la Universidad de Cundinamarca.", avatarColor: "#B45309", avatarBg: "#FEF3C7" },
                 { initials: "PL", nombre: "Paula Sofía Lizcano Triana", rol: "Practicante · Ingeniería de Sistemas", desc: "Desarrollo frontend y backend, gestión de bases de datos y diseño de la plataforma. Trabaja con React, Node.js y SQL, enfocada en interfaces funcionales y claras.", avatarColor: "#007B3E", avatarBg: "#DCFCE7" },
               ].map((p, i) => (
@@ -460,10 +461,21 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
                   style={{ background: "white", borderRadius: "16px", padding: "28px 22px", border: "1px solid #E5E7EB", boxShadow: "0 2px 10px rgba(0,0,0,0.05)", transition: "transform 0.25s ease, box-shadow 0.25s ease", cursor: "default" }}
                   onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.11)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.05)"; }}>
-                  <div style={{ width: "58px", height: "58px", borderRadius: "50%", backgroundColor: p.avatarBg, border: `2px solid ${p.avatarColor}`, display: "flex", alignItems: "center", justifyContent: "center", color: p.avatarColor, fontWeight: "800", fontSize: "18px", marginBottom: "16px", letterSpacing: "0.5px" }}>{p.initials}</div>
+                  {p.foto
+                    ? <img src={p.foto} alt={p.nombre} style={{ width: "58px", height: "58px", borderRadius: "50%", objectFit: "cover", border: `2px solid ${p.avatarColor}`, marginBottom: "16px", display: "block" }} />
+                    : <div style={{ width: "58px", height: "58px", borderRadius: "50%", backgroundColor: p.avatarBg, border: `2px solid ${p.avatarColor}`, display: "flex", alignItems: "center", justifyContent: "center", color: p.avatarColor, fontWeight: "800", fontSize: "18px", marginBottom: "16px", letterSpacing: "0.5px" }}>{p.initials}</div>
+                  }
                   <p style={{ fontWeight: "700", fontSize: "15px", color: "#1A1A1A", margin: "0 0 5px 0", lineHeight: 1.3 }}>{p.nombre}</p>
                   <p style={{ fontSize: "11px", fontWeight: "700", color: p.avatarColor, textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 12px 0" }}>{p.rol}</p>
                   <p style={{ color: "#555", fontSize: "13px", lineHeight: "1.75", margin: 0 }}>{p.desc}</p>
+                  {p.researchgate && (
+                    <a href={p.researchgate} target="_blank" rel="noreferrer"
+                      style={{ display: "inline-flex", alignItems: "center", gap: "6px", backgroundColor: "#00A99D", color: "white", padding: "7px 16px", borderRadius: "22px", fontSize: "12px", fontWeight: "700", textDecoration: "none", marginTop: "12px", transition: "opacity 0.2s" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}>
+                      ResearchGate
+                    </a>
+                  )}
                 </div>
               ))}
             </div>

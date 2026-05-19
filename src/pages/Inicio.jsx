@@ -4,6 +4,7 @@ import LogoUdec from "../assets/udecblanco.png";
 import qr from "../assets/qr.png";
 import fotoHugo from "../assets/hugo.jpg";
 import fotoBlanca from "../assets/blanca.jpg";
+import fotoSofia from "../assets/sofia.jpg";
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -455,7 +456,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
               {[
                 { initials: "BB", nombre: "Blanca Luz Buitrago Sánchez", rol: "Colaboradora", desc: "Integrante del equipo de investigación y desarrollo del proyecto Praxis en la Universidad de Cundinamarca.", avatarColor: "#00A99D", avatarBg: "#c1eae7", foto: fotoBlanca, researchgate: "https://www.researchgate.net/profile/Blanca-Buitrago-3" },
                 { initials: "JD", nombre: "John Jairo Durán", rol: "Colaborador", desc: "Integrante del equipo de investigación y desarrollo del proyecto Praxis en la Universidad de Cundinamarca.", avatarColor: "#B45309", avatarBg: "#FEF3C7" },
-                { initials: "PL", nombre: "Paula Sofía Lizcano Triana", rol: "Practicante · Ingeniería de Sistemas", desc: "Desarrollo frontend y backend, gestión de bases de datos y diseño de la plataforma. Trabaja con React, Node.js y SQL, enfocada en interfaces funcionales y claras.", avatarColor: "#007B3E", avatarBg: "#DCFCE7" },
+                { initials: "PL", nombre: "Paula Sofía Lizcano Triana", rol: "Practicante · Ingeniería de Sistemas", desc: "Desarrollo frontend y backend, gestión de bases de datos y diseño de la plataforma. Trabaja con React, Node.js y SQL, enfocada en interfaces funcionales y claras.", avatarColor: "#007B3E", avatarBg: "#DCFCE7", foto: fotoSofia },
               ].map((p, i) => (
                 <div key={i}
                   style={{ background: "white", borderRadius: "16px", padding: "28px 22px", border: "1px solid #E5E7EB", boxShadow: "0 2px 10px rgba(0,0,0,0.05)", transition: "transform 0.25s ease, box-shadow 0.25s ease", cursor: "default" }}

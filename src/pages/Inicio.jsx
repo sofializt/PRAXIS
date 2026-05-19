@@ -5,6 +5,7 @@ import qr from "../assets/qr.png";
 import fotoHugo from "../assets/hugo.jpg";
 import fotoBlanca from "../assets/blanca.jpg";
 import fotoSofia from "../assets/sofia.jpg";
+import manualImg from "../assets/manual.png";
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -21,6 +22,8 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
   const [animar, setAnimar] = useState(true);
   const [animandoProfesor, setAnimandoProfesor] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
+  const [verManual, setVerManual] = useState(false);
+  const [manualFlotante, setManualFlotante] = useState(false);
   const isMobile = useIsMobile();
 
   const esDocente = usuario?.id_rol === 3;
@@ -28,6 +31,11 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
   useEffect(() => {
     fetch("https://backend-isu.onrender.com/api/escenarios").catch(() => {});
   }, []);
+
+  // Cerrar manual flotante al cambiar de sección
+  useEffect(() => {
+    setManualFlotante(false);
+  }, [menuActivo]);
 
   const manejarClickMenu = (key) => {
     setMenuAbierto(false);
@@ -321,7 +329,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
         transition: "all 0.4s ease",
       }}>
 
-        {/* INICIO */}
+        {/* ── INICIO ── */}
         {menuActivo === "inicio" && (
           <div style={{ width: isMobile ? "95%" : "600px", margin: "0 auto", padding: isMobile ? "0 10px" : "0" }}>
             <iframe
@@ -334,7 +342,9 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
               allowFullScreen
               style={{ borderRadius: "10px" }}
             />
-            <div style={{ display: "flex", justifyContent: "center", marginTop: "30px" }}>
+
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "30px", gap: "14px", flexWrap: "wrap" }}>
+              {/* Botón principal */}
               <button
                 onClick={handleAnonimo}
                 disabled={cargandoAnonimo}
@@ -351,11 +361,71 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
               >
                 {cargandoAnonimo ? "Cargando..." : "COMIENZA EL JUICIO"}
               </button>
+
+              {/* ── BOTÓN MANUAL FLOTANTE (sección Inicio) ── */}
+              <button
+                onClick={() => setManualFlotante(!manualFlotante)}
+                style={{
+                  backgroundColor: manualFlotante ? "#E8F5EE" : "white",
+                  color: "#007B3E",
+                  border: "2px solid #007B3E",
+                  borderRadius: "40px",
+                  padding: isMobile ? "12px 22px" : "15px 28px",
+                  fontSize: isMobile ? "14px" : "15px",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
+                  fontFamily: "Montserrat, sans-serif",
+                  display: "flex", alignItems: "center", gap: "8px",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.05)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+              >
+                <span style={{ fontSize: "18px" }}>📖</span>
+                {manualFlotante ? "Cerrar guía" : "¿Cómo usar Praxis?"}
+              </button>
+            </div>
+
+            {/* ── PANEL DESPLEGABLE MANUAL (sección Inicio) ── */}
+            <div style={{
+              maxHeight: manualFlotante ? "2400px" : "0px",
+              overflow: "hidden",
+              transition: "max-height 0.65s cubic-bezier(0.4,0,0.2,1)",
+              marginTop: manualFlotante ? "28px" : "0",
+            }}>
+              <div style={{
+                background: "#F0FBF5",
+                borderRadius: "16px",
+                padding: "20px",
+                border: "1px solid #C8E6D6",
+                boxShadow: "0 6px 24px rgba(0,75,62,0.09)",
+              }}>
+                <p style={{
+                  textAlign: "center", color: "#007B3E", fontWeight: "700",
+                  fontSize: "14px", margin: "0 0 16px 0", letterSpacing: "0.5px",
+                }}>
+                  Guía rápida de usuario · Plataforma Praxis
+                </p>
+                <img
+                  src={manualImg}
+                  alt="Manual de usuario Praxis"
+                  style={{
+                    width: "100%",
+                    maxWidth: "480px",
+                    display: "block",
+                    margin: "0 auto",
+                    borderRadius: "12px",
+                    boxShadow: "0 4px 18px rgba(0,0,0,0.10)",
+                    border: "2px solid #C8E6D6",
+                  }}
+                />
+              </div>
             </div>
           </div>
         )}
 
-        {/* QUÉ HACEMOS */}
+        {/* ── QUÉ HACEMOS ── */}
         {menuActivo === "que" && (
           <div style={{ maxWidth: "960px", margin: "0 auto", padding: isMobile ? "0 20px 40px" : "0 40px 60px" }}>
 
@@ -378,7 +448,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
 
             <h2 style={{ color: "#007B3E", fontWeight: "700", fontSize: "22px", margin: "0 0 6px 0" }}>¿Qué ofrece la plataforma?</h2>
             <p style={{ color: "#666", fontSize: "15px", margin: "0 0 28px 0", lineHeight: "1.6" }}>Praxis integra tres pilares para acompañar al docente en su proceso de reflexión.</p>
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: "20px", marginBottom: "56px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: "20px", marginBottom: "40px" }}>
               {[
                 { icon: "📚", titulo: "Escenarios educativos", texto: "Casos reales sobre el uso de la IA en el aula, diseñados para provocar la reflexión docente.", accentColor: "#007B3E", bgColor: "#E8F5EE" },
                 { icon: "⚖️", titulo: "Toma de decisiones", texto: "El docente analiza cada situación y elige su postura frente a dilemas pedagógicos concretos.", accentColor: "#F7931E", bgColor: "#FEF3C7" },
@@ -393,6 +463,83 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
                   <p style={{ color: "#444", fontSize: "14px", lineHeight: "1.75", margin: 0 }}>{card.texto}</p>
                 </div>
               ))}
+            </div>
+
+            {/* ── MANUAL ACORDEÓN (sección ¿Qué hacemos?) ── */}
+            <div style={{ marginBottom: "52px" }}>
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                flexWrap: "wrap", gap: "12px",
+                background: verManual ? "#E8F5EE" : "white",
+                border: `2px solid ${verManual ? "#007B3E" : "#E5E7EB"}`,
+                borderRadius: verManual ? "16px 16px 0 0" : "16px",
+                padding: "20px 24px",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                boxShadow: verManual ? "none" : "0 2px 10px rgba(0,0,0,0.05)",
+              }}
+                onClick={() => setVerManual(!verManual)}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                  <div style={{
+                    width: "44px", height: "44px", borderRadius: "12px",
+                    backgroundColor: verManual ? "#007B3E" : "#E8F5EE",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: "22px", flexShrink: 0,
+                    transition: "all 0.3s ease",
+                  }}>
+                    📖
+                  </div>
+                  <div>
+                    <p style={{ fontWeight: "700", fontSize: "16px", color: "#1A1A1A", margin: "0 0 3px 0" }}>
+                      Guía rápida de usuario
+                    </p>
+                    <p style={{ color: "#666", fontSize: "13px", margin: 0 }}>
+                      Aprende a navegar la plataforma paso a paso
+                    </p>
+                  </div>
+                </div>
+                <div style={{
+                  width: "32px", height: "32px", borderRadius: "50%",
+                  backgroundColor: verManual ? "#007B3E" : "#F3F4F6",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: verManual ? "white" : "#666",
+                  fontWeight: "700", fontSize: "18px",
+                  transition: "all 0.3s ease",
+                  transform: verManual ? "rotate(180deg)" : "rotate(0deg)",
+                  flexShrink: 0,
+                }}>
+                  ↓
+                </div>
+              </div>
+
+              {/* Panel imagen */}
+              <div style={{
+                maxHeight: verManual ? "3000px" : "0px",
+                overflow: "hidden",
+                transition: "max-height 0.65s cubic-bezier(0.4,0,0.2,1)",
+              }}>
+                <div style={{
+                  border: "2px solid #007B3E", borderTop: "none",
+                  borderRadius: "0 0 16px 16px",
+                  padding: "24px 20px",
+                  background: "white",
+                }}>
+                  <img
+                    src={manualImg}
+                    alt="Manual de usuario Praxis"
+                    style={{
+                      width: "100%",
+                      maxWidth: "520px",
+                      display: "block",
+                      margin: "0 auto",
+                      borderRadius: "12px",
+                      boxShadow: "0 8px 32px rgba(0,75,62,0.13)",
+                      border: "1px solid #E5E7EB",
+                    }}
+                  />
+                </div>
+              </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "24px", marginBottom: "56px" }}>

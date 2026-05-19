@@ -463,8 +463,8 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
                   onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.11)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.05)"; }}>
                   {p.foto
-                    ? <img src={p.foto} alt={p.nombre} style={{ width: "58px", height: "58px", borderRadius: "50%", objectFit: "cover", border: `2px solid ${p.avatarColor}`, marginBottom: "16px", display: "block" }} />
-                    : <div style={{ width: "58px", height: "58px", borderRadius: "50%", backgroundColor: p.avatarBg, border: `2px solid ${p.avatarColor}`, display: "flex", alignItems: "center", justifyContent: "center", color: p.avatarColor, fontWeight: "800", fontSize: "18px", marginBottom: "16px", letterSpacing: "0.5px" }}>{p.initials}</div>
+                    ? <img src={p.foto} alt={p.nombre} style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover", border: `2px solid ${p.avatarColor}`, marginBottom: "16px", display: "block" }} />
+                    : <div style={{ width: "100px", height: "100px", borderRadius: "50%", backgroundColor: p.avatarBg, border: `2px solid ${p.avatarColor}`, display: "flex", alignItems: "center", justifyContent: "center", color: p.avatarColor, fontWeight: "800", fontSize: "18px", marginBottom: "16px", letterSpacing: "0.5px" }}>{p.initials}</div>
                   }
                   <p style={{ fontWeight: "700", fontSize: "15px", color: "#1A1A1A", margin: "0 0 5px 0", lineHeight: 1.3 }}>{p.nombre}</p>
                   <p style={{ fontSize: "11px", fontWeight: "700", color: p.avatarColor, textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 12px 0" }}>{p.rol}</p>

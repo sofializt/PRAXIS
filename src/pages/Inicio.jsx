@@ -17,6 +17,19 @@ const useIsMobile = () => {
   return isMobile;
 };
 
+const impactos = [
+  { icon: "🧠", texto: "Reducción del esfuerzo cognitivo" },
+  { icon: "⚡", texto: "Eficiencia frente al aprendizaje (Aprendizaje superficial)" },
+  { icon: "🔧", texto: "Debilitamiento de habilidades fundamentales" },
+  { icon: "🔄", texto: "Homogeneización del pensamiento" },
+  { icon: "🏗️", texto: "Pérdida del proceso de construcción del conocimiento" },
+  { icon: "❓", texto: "Disminución de la capacidad de problematización" },
+  { icon: "🎯", texto: "Reducción del aprendizaje basado en el error" },
+  { icon: "✍️", texto: "Dificultades para evidenciar autoría y proceso" },
+  { icon: "💫", texto: "Desplazamiento de la motivación intrínseca" },
+  { icon: "📊", texto: "Brechas en el uso significativo de la IA" },
+];
+
 export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonimo, onCerrarSesion }) {
   const [menuActivo, setMenuActivo] = useState("inicio");
   const [animar, setAnimar] = useState(true);
@@ -24,6 +37,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [verManual, setVerManual] = useState(false);
   const [manualFlotante, setManualFlotante] = useState(false);
+  const [impactoVisible, setImpactoVisible] = useState(false);
   const isMobile = useIsMobile();
 
   const esDocente = usuario?.id_rol === 3;
@@ -32,9 +46,18 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
     fetch("https://backend-isu.onrender.com/api/escenarios").catch(() => {});
   }, []);
 
-  // Cerrar manual flotante al cambiar de sección
   useEffect(() => {
     setManualFlotante(false);
+  }, [menuActivo]);
+
+  // Animar impactos al entrar a la sección "que"
+  useEffect(() => {
+    if (menuActivo === "que") {
+      const timer = setTimeout(() => setImpactoVisible(true), 400);
+      return () => clearTimeout(timer);
+    } else {
+      setImpactoVisible(false);
+    }
   }, [menuActivo]);
 
   const manejarClickMenu = (key) => {
@@ -227,7 +250,6 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
           </div>
         )}
 
-        {/* Derecha navbar desktop */}
         {!isMobile && (
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             {esDocente ? (
@@ -344,7 +366,6 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
             />
 
             <div style={{ display: "flex", justifyContent: "center", marginTop: "30px", gap: "14px", flexWrap: "wrap" }}>
-              {/* Botón principal */}
               <button
                 onClick={handleAnonimo}
                 disabled={cargandoAnonimo}
@@ -362,7 +383,6 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
                 {cargandoAnonimo ? "Cargando..." : "COMIENZA EL JUICIO"}
               </button>
 
-              {/* ── BOTÓN MANUAL FLOTANTE (sección Inicio) ── */}
               <button
                 onClick={() => setManualFlotante(!manualFlotante)}
                 style={{
@@ -387,7 +407,6 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
               </button>
             </div>
 
-            {/* ── PANEL DESPLEGABLE MANUAL (sección Inicio) ── */}
             <div style={{
               maxHeight: manualFlotante ? "2400px" : "0px",
               overflow: "hidden",
@@ -465,7 +484,7 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
               ))}
             </div>
 
-            {/* ── MANUAL ACORDEÓN (sección ¿Qué hacemos?) ── */}
+            {/* ── MANUAL ACORDEÓN ── */}
             <div style={{ marginBottom: "52px" }}>
               <div style={{
                 display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -513,7 +532,6 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
                 </div>
               </div>
 
-              {/* Panel imagen */}
               <div style={{
                 maxHeight: verManual ? "3000px" : "0px",
                 overflow: "hidden",
@@ -556,6 +574,165 @@ export default function Inicio({ onSoyProfesor, onJuzga, usuario, cargandoAnonim
                 </p>
               </div>
             </div>
+
+            {/* ══════════════════════════════════════════
+                ── PIEZA GRÁFICA: ¿POR QUÉ LO HACEMOS? ──
+                ══════════════════════════════════════════ */}
+            <div style={{
+              marginBottom: "56px",
+              borderRadius: "24px",
+              overflow: "hidden",
+              boxShadow: "0 20px 60px rgba(0, 36, 20, 0.18)",
+              position: "relative",
+            }}>
+              {/* Cabecera */}
+              <div style={{
+                background: "linear-gradient(135deg, #00482B 0%, #007B3E 60%, #00A55A 100%)",
+                padding: isMobile ? "36px 28px 28px" : "48px 56px 36px",
+                position: "relative",
+                overflow: "hidden",
+              }}>
+                {/* Decoración de fondo */}
+                <div style={{
+                  position: "absolute", top: "-60px", right: "-40px",
+                  width: "260px", height: "260px", borderRadius: "50%",
+                  background: "rgba(255,255,255,0.05)",
+                }} />
+                <div style={{
+                  position: "absolute", bottom: "-80px", left: "20%",
+                  width: "200px", height: "200px", borderRadius: "50%",
+                  background: "rgba(255,255,255,0.04)",
+                }} />
+
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <div style={{
+                    display: "inline-flex", alignItems: "center", gap: "10px",
+                    backgroundColor: "rgba(255,255,255,0.12)",
+                    borderRadius: "30px", padding: "6px 18px",
+                    marginBottom: "18px",
+                  }}>
+                    <span style={{ fontSize: "16px" }}>⚠️</span>
+                    <span style={{ color: "rgba(255,255,255,0.85)", fontSize: "11px", fontWeight: "700", letterSpacing: "2px", textTransform: "uppercase" }}>
+                      Contexto y motivación
+                    </span>
+                  </div>
+                  <h2 style={{
+                    color: "white", fontWeight: "800",
+                    fontSize: isMobile ? "26px" : "36px",
+                    margin: "0 0 16px 0", lineHeight: 1.2,
+                  }}>
+                    ¿Por qué lo hacemos?
+                  </h2>
+                  <p style={{
+                    color: "rgba(255,255,255,0.82)", fontSize: isMobile ? "14px" : "15px",
+                    lineHeight: "1.8", margin: 0, maxWidth: "640px",
+                  }}>
+                    La irrupción acelerada de la IA en las aulas está generando efectos concretos
+                    sobre los procesos de aprendizaje. Estos son algunos de los impactos documentados
+                    que motivaron la creación de Praxis:
+                  </p>
+                </div>
+              </div>
+
+              {/* Cuerpo con los impactos */}
+              <div style={{
+                background: "#0D1F17",
+                padding: isMobile ? "28px 20px 32px" : "40px 56px 48px",
+              }}>
+                <p style={{
+                  color: "rgba(255,255,255,0.45)", fontSize: "11px", fontWeight: "700",
+                  letterSpacing: "2.5px", textTransform: "uppercase",
+                  margin: "0 0 28px 0",
+                }}>
+                  Impactos de la IA en educación
+                </p>
+
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+                  gap: isMobile ? "12px" : "14px",
+                }}>
+                  {impactos.map((item, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: "flex", alignItems: "flex-start", gap: "14px",
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        borderRadius: "12px",
+                        padding: "16px 18px",
+                        opacity: impactoVisible ? 1 : 0,
+                        transform: impactoVisible ? "translateY(0)" : "translateY(16px)",
+                        transition: `opacity 0.45s ease ${i * 60}ms, transform 0.45s ease ${i * 60}ms`,
+                        cursor: "default",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "rgba(0,123,62,0.18)";
+                        e.currentTarget.style.borderColor = "rgba(0,123,62,0.5)";
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                        e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                        e.currentTarget.style.transform = "translateY(0)";
+                      }}
+                    >
+                      {/* Número */}
+                      <div style={{
+                        minWidth: "28px", height: "28px",
+                        borderRadius: "8px",
+                        background: "rgba(0,123,62,0.35)",
+                        border: "1px solid rgba(0,165,90,0.4)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "#4DD98A", fontSize: "11px", fontWeight: "800",
+                        flexShrink: 0,
+                        fontFamily: "Montserrat, sans-serif",
+                      }}>
+                        {String(i + 1).padStart(2, "0")}
+                      </div>
+
+                      {/* Ícono + texto */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1 }}>
+                        <span style={{ fontSize: "18px", flexShrink: 0 }}>{item.icon}</span>
+                        <p style={{
+                          color: "rgba(255,255,255,0.88)",
+                          fontSize: isMobile ? "13px" : "14px",
+                          fontWeight: "500", lineHeight: "1.5",
+                          margin: 0,
+                        }}>
+                          {item.texto}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Nota al pie */}
+                <div style={{
+                  marginTop: "32px",
+                  padding: "18px 22px",
+                  background: "rgba(255, 193, 7, 0.07)",
+                  border: "1px solid rgba(255, 193, 7, 0.25)",
+                  borderRadius: "12px",
+                  display: "flex", alignItems: "flex-start", gap: "12px",
+                }}>
+                  <span style={{ fontSize: "20px", flexShrink: 0, marginTop: "1px" }}>💡</span>
+                  <p style={{
+                    color: "rgba(255,255,255,0.70)",
+                    fontSize: "13px", lineHeight: "1.75", margin: 0,
+                    fontStyle: "italic",
+                  }}>
+                    Estos fenómenos no implican que la IA sea inherentemente negativa para la educación,
+                    sino que su adopción sin reflexión pedagógica puede comprometer procesos formativos
+                    fundamentales. Praxis nace para hacer visible esta tensión y acompañar al docente
+                    en una toma de decisiones informada.
+                  </p>
+                </div>
+              </div>
+            </div>
+            {/* ══════════════════════════════════════════
+                ── FIN PIEZA GRÁFICA ──
+                ══════════════════════════════════════════ */}
 
             <h2 style={{ color: "#007B3E", fontWeight: "700", fontSize: "22px", margin: "0 0 8px 0" }}>¿Quiénes lo hacemos?</h2>
             <p style={{ color: "#666", fontSize: "15px", lineHeight: "1.7", marginBottom: "32px" }}>

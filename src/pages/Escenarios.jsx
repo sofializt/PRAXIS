@@ -9,6 +9,17 @@ const DIMENSIONES = [
   { id: 4, nombre: "Equidad" },
 ];
 
+const CREDITOS = {
+  "El Dilema del Vacío Normativo (Justicia vs. Responsabilidad)":
+    "Este escenario se fundamentó en la narrativa del profesor Arleys San Martín Bolívar",
+  "La Brecha del \"Plan Lector\" (Privilegio vs. Desventaja)":
+    "Este escenario se fundamentó en la narrativa del profesor Santiago Atehortúa Morales",
+  "El Dilema de la Escala vs. el Terreno (Datos vs. Empatía)":
+    "Este escenario se fundamentó en la narrativa del profesor Daniel Esteban Rosero López",
+  "El Dilema del \"Parásito\" Intelectual (Comprensión vs. Creación)":
+    "Este escenario se fundamentó en la narrativa del profesor Óscar José Lizcano Cañon",
+};
+
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   useEffect(() => {
@@ -164,7 +175,6 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
     onCerrarSesion();
   };
 
-  // ← ya NO llama a cerrarSesion, solo vuelve al inicio manteniendo la sesión
   const volverInicio = () => {
     if (onVolverInicio) onVolverInicio();
   };
@@ -598,6 +608,45 @@ export default function Escenarios({ onCerrarSesion, onVolverInicio, usuario }) 
                     >
                       ↩ Cambiar respuesta
                     </button>
+                  </div>
+                )}
+
+                {/* CRÉDITOS */}
+                {CREDITOS[escenario?.titulo] && (
+                  <div style={{
+                    maxWidth: "1000px",
+                    margin: "30px auto 0",
+                    padding: isMobile ? "0 16px" : "0 130px",
+                  }}>
+                    <div style={{
+                      borderTop: "1px solid #E5E7EB",
+                      paddingTop: "16px",
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "10px",
+                    }}>
+                      <span style={{ fontSize: "16px", marginTop: "1px" }}>📝</span>
+                      <div>
+                        <p style={{
+                          margin: "0 0 4px 0",
+                          fontSize: isMobile ? "11px" : "12px",
+                          fontWeight: "700",
+                          color: "#007B3E",
+                          textTransform: "uppercase",
+                          letterSpacing: "1px",
+                        }}>
+                          Créditos
+                        </p>
+                        <p style={{
+                          margin: 0,
+                          fontSize: isMobile ? "13px" : "14px",
+                          color: "#555",
+                          lineHeight: "1.6",
+                        }}>
+                          {CREDITOS[escenario.titulo]}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
 

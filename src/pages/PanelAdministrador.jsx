@@ -1,28 +1,171 @@
 import React, { useEffect, useState } from "react";
-import logo from "../assets/praxis.svg";
-import addIcon from "../assets/add_circle.svg";
 
+// ── Minimal style constants ──────────────────────────────────────────────────
+const C = {
+  green:      "#007B3E",
+  greenLight: "#e8f5ee",
+  greenMid:   "#91C256",
+  teal:       "#2490A3",
+  text:       "#1a2e23",
+  muted:      "#6b7c74",
+  border:     "#d4e8dc",
+  white:      "#ffffff",
+  rowAlt:     "#f4faf7",
+  danger:     "#c0392b",
+};
+
+const font = "'DM Sans', sans-serif";
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const isAnon = (correo = "") =>
+  correo.startsWith("anonimo_") || correo === "anonimo@anonimo.com";
+
+// Replace raw anon correo with "Anónimo #N" using a stable counter per render
+function labelAnonimos(usuarios) {
+  let n = 0;
+  return usuarios.map((u) => ({
+    ...u,
+    _display: isAnon(u.correo) ? `Anónimo #${++n}` : `${u.nombre} ${u.apellido}`,
+    _isAnon: isAnon(u.correo),
+  }));
+}
+
+// ── Pill component ───────────────────────────────────────────────────────────
+function Pill({ children, color = C.green }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      padding: "2px 10px",
+      borderRadius: 20,
+      fontSize: 12,
+      fontWeight: 600,
+      background: color + "18",
+      color,
+      border: `1px solid ${color}30`,
+    }}>
+      {children}
+    </span>
+  );
+}
+
+// ── Empty state ──────────────────────────────────────────────────────────────
+function Empty({ text }) {
+  return (
+    <tr>
+      <td colSpan={10} style={{ textAlign: "center", padding: "48px 0", color: C.muted, fontSize: 15 }}>
+        {text}
+      </td>
+    </tr>
+  );
+}
+
+// ── Modal ────────────────────────────────────────────────────────────────────
+function Modal({ title, onClose, onSave, children }) {
+  return (
+    <div style={{
+      position: "fixed", inset: 0,
+      background: "rgba(0,0,0,.45)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      zIndex: 1000,
+    }}>
+      <div style={{
+        width: 540, maxHeight: "90vh", overflowY: "auto",
+        background: C.white,
+        borderRadius: 16,
+        boxShadow: "0 24px 64px rgba(0,0,0,.18)",
+        padding: "32px 36px",
+        fontFamily: font,
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <h2 style={{ margin: 0, color: C.text, fontSize: 22, fontWeight: 700 }}>{title}</h2>
+          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: C.muted }}>✕</button>
+        </div>
+        {children}
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 28 }}>
+          <button onClick={onClose} style={btnOutline}>Cancelar</button>
+          <button onClick={onSave} style={btnPrimary}>Guardar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Button styles ────────────────────────────────────────────────────────────
+const btnPrimary = {
+  background: C.green, color: C.white,
+  border: "none", borderRadius: 8,
+  padding: "10px 22px", fontWeight: 600,
+  fontSize: 14, cursor: "pointer", fontFamily: font,
+};
+const btnOutline = {
+  background: "none", color: C.green,
+  border: `1.5px solid ${C.green}`, borderRadius: 8,
+  padding: "10px 22px", fontWeight: 600,
+  fontSize: 14, cursor: "pointer", fontFamily: font,
+};
+const inputStyle = {
+  width: "100%", marginBottom: 14,
+  padding: "11px 14px",
+  borderRadius: 8, border: `1.5px solid ${C.border}`,
+  fontSize: 14, fontFamily: font,
+  outline: "none", boxSizing: "border-box",
+  color: C.text,
+};
+
+// ── Table wrapper ────────────────────────────────────────────────────────────
+function Table({ headers, children }) {
+  return (
+    <div style={{ overflowX: "auto", borderRadius: 12, border: `1px solid ${C.border}` }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: font }}>
+        <thead>
+          <tr style={{ background: C.green }}>
+            {headers.map((h) => (
+              <th key={h} style={{
+                padding: "14px 16px", textAlign: "left",
+                color: C.white, fontWeight: 600, fontSize: 13,
+                letterSpacing: ".4px", whiteSpace: "nowrap",
+              }}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>{children}</tbody>
+      </table>
+    </div>
+  );
+}
+
+function TR({ children, alt }) {
+  return (
+    <tr style={{ background: alt ? C.rowAlt : C.white, borderBottom: `1px solid ${C.border}` }}>
+      {children}
+    </tr>
+  );
+}
+
+function TD({ children, muted, left }) {
+  return (
+    <td style={{
+      padding: "13px 16px", fontSize: 14,
+      color: muted ? C.muted : C.text,
+      textAlign: left ? "left" : "left",
+      verticalAlign: "top",
+    }}>{children ?? "—"}</td>
+  );
+}
+
+// ── Main component ───────────────────────────────────────────────────────────
 export default function PanelAdministrador() {
-  const [seccionActiva, setSeccionActiva] = useState("escenarios");
+  const [seccion, setSeccion]       = useState("escenarios");
   const [escenarios, setEscenarios] = useState([]);
-  const [usuarios, setUsuarios] = useState([]);
+  const [usuarios, setUsuarios]     = useState([]);
   const [respuestas, setRespuestas] = useState([]);
 
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [modoEdicion, setModoEdicion] = useState(false);
-  const [idEscenarioEditando, setIdEscenarioEditando] = useState(null);
-
-  const [nuevoEscenario, setNuevoEscenario] = useState({
-    titulo: "",
-    descripcion: "",
-    pregunta: "",
-    id_dimension: 1,
-    opcion1: "",
-    opcion2: ""
-  });
-
-  const [imagen1, setImagen1] = useState(null);
-  const [imagen2, setImagen2] = useState(null);
+  const [modal, setModal]           = useState(false);
+  const [editMode, setEditMode]     = useState(false);
+  const [editId, setEditId]         = useState(null);
+  const [form, setForm]             = useState({ titulo:"", descripcion:"", pregunta:"", id_dimension:1, opcion1:"", opcion2:"" });
+  const [img1, setImg1]             = useState(null);
+  const [img2, setImg2]             = useState(null);
 
   useEffect(() => {
     cargarEscenarios();
@@ -30,143 +173,74 @@ export default function PanelAdministrador() {
     cargarRespuestas();
   }, []);
 
+  const API = "https://backend-isu.onrender.com/api";
+
   const cargarEscenarios = async () => {
     try {
-      const res = await fetch("https://backend-isu.onrender.com/api/escenarios");
-      const data = await res.json();
-      const formateados = data.map((item) => ({
-        id: item.id_escenario,
-        titulo: item.titulo,
-        descripcion: item.descripcion,
-        pregunta: item.pregunta,
-        id_dimension: item.id_dimension,
-        dimension:
-          item.id_dimension === 1 ? "Pedagógica"
-          : item.id_dimension === 5 ? "Autonomía Profesional"
-          : item.id_dimension === 3 ? "Ética"
-          : item.id_dimension === 4 ? "Equidad"
-          : "Sin dimensión"
-      }));
-      setEscenarios(formateados);
-    } catch (error) {
-      console.error(error);
-    }
+      const data = await (await fetch(`${API}/escenarios`)).json();
+      setEscenarios(data.map((i) => ({
+        id: i.id_escenario, titulo: i.titulo,
+        descripcion: i.descripcion, pregunta: i.pregunta,
+        id_dimension: i.id_dimension,
+        dimension: { 1:"Pedagógica", 5:"Autonomía Profesional", 3:"Ética", 4:"Equidad" }[i.id_dimension] ?? "—",
+      })));
+    } catch (e) { console.error(e); }
   };
 
   const cargarUsuarios = async () => {
-    try {
-      const res = await fetch("https://backend-isu.onrender.com/api/usuarios");
-      const data = await res.json();
-      setUsuarios(data);
-    } catch (error) {
-      console.error(error);
-    }
+    try { setUsuarios(await (await fetch(`${API}/usuarios`)).json()); }
+    catch (e) { console.error(e); }
   };
 
   const cargarRespuestas = async () => {
-    try {
-      const res = await fetch("https://backend-isu.onrender.com/api/respuestas");
-      const data = await res.json();
-      setRespuestas(data);
-    } catch (error) {
-      console.error(error);
-    }
+    try { setRespuestas(await (await fetch(`${API}/respuestas`)).json()); }
+    catch (e) { console.error(e); }
   };
 
-  const guardarEscenario = async () => {
+  const guardar = async () => {
     try {
-      const usuarioAdmin = JSON.parse(localStorage.getItem("usuarioAdmin"));
+      const admin = JSON.parse(localStorage.getItem("usuarioAdmin"));
+      const fd = new FormData();
+      Object.entries({ ...form, id_admin_creador: admin?.id_usuario }).forEach(([k,v]) => fd.append(k, v));
+      if (img1) fd.append("imagen1", img1);
+      if (img2) fd.append("imagen2", img2);
 
-      const formData = new FormData();
-      formData.append("titulo", nuevoEscenario.titulo);
-      formData.append("descripcion", nuevoEscenario.descripcion);
-      formData.append("pregunta", nuevoEscenario.pregunta);
-      formData.append("id_dimension", nuevoEscenario.id_dimension);
-      formData.append("id_admin_creador", usuarioAdmin?.id_usuario);
-      formData.append("opcion1", nuevoEscenario.opcion1);
-      formData.append("opcion2", nuevoEscenario.opcion2);
+      const url    = editMode ? `${API}/escenarios/${editId}` : `${API}/escenarios`;
+      const method = editMode ? "PUT" : "POST";
+      const res    = await fetch(url, { method, body: fd });
+      const data   = await res.json();
 
-      if (imagen1) formData.append("imagen1", imagen1);
-      if (imagen2) formData.append("imagen2", imagen2);
-
-      const url = modoEdicion
-        ? `https://backend-isu.onrender.com/api/escenarios/${idEscenarioEditando}`
-        : "https://backend-isu.onrender.com/api/escenarios";
-
-      const method = modoEdicion ? "PUT" : "POST";
-
-      const res = await fetch(url, { method, body: formData });
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "Error al guardar");
-        return;
-      }
-
-      alert(modoEdicion ? "Escenario actualizado correctamente" : "Escenario creado correctamente");
-
-      setMostrarModal(false);
-      setModoEdicion(false);
-      setIdEscenarioEditando(null);
-      setNuevoEscenario({ titulo: "", descripcion: "", pregunta: "", id_dimension: 1, opcion1: "", opcion2: "" });
-      setImagen1(null);
-      setImagen2(null);
+      if (!res.ok) { alert(data.message || "Error"); return; }
+      alert(editMode ? "Actualizado ✓" : "Creado ✓");
+      cerrarModal();
       cargarEscenarios();
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (e) { console.error(e); }
   };
 
-  const editarEscenario = async (item) => {
-    setModoEdicion(true);
-    setIdEscenarioEditando(item.id);
-
+  const editar = async (item) => {
+    setEditMode(true); setEditId(item.id);
     try {
-      const res = await fetch(`https://backend-isu.onrender.com/api/opciones/${item.id}`);
-      const opciones = await res.json();
-      setNuevoEscenario({
-        titulo: item.titulo,
-        descripcion: item.descripcion,
-        pregunta: item.pregunta,
-        id_dimension: item.id_dimension,
-        opcion1: opciones[0]?.descripcion || "",
-        opcion2: opciones[1]?.descripcion || ""
-      });
-    } catch (error) {
-      console.error(error);
-      setNuevoEscenario({
-        titulo: item.titulo,
-        descripcion: item.descripcion,
-        pregunta: item.pregunta,
-        id_dimension: item.id_dimension,
-        opcion1: "",
-        opcion2: ""
-      });
-    }
-
-    setImagen1(null);
-    setImagen2(null);
-    setMostrarModal(true);
+      const ops = await (await fetch(`${API}/opciones/${item.id}`)).json();
+      setForm({ ...item, opcion1: ops[0]?.descripcion||"", opcion2: ops[1]?.descripcion||"" });
+    } catch { setForm({ ...item, opcion1:"", opcion2:"" }); }
+    setImg1(null); setImg2(null); setModal(true);
   };
 
-  const eliminarEscenario = async (id) => {
-    const confirmar = window.confirm("¿Seguro que deseas eliminar este escenario?");
-    if (!confirmar) return;
-
+  const eliminar = async (id) => {
+    if (!window.confirm("¿Eliminar este escenario?")) return;
     try {
-      const res = await fetch(`https://backend-isu.onrender.com/api/escenarios/${id}`, { method: "DELETE" });
+      const res  = await fetch(`${API}/escenarios/${id}`, { method:"DELETE" });
       const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "Error al eliminar");
-        return;
-      }
-
-      alert("Escenario eliminado correctamente");
+      if (!res.ok) { alert(data.message || "Error"); return; }
+      alert("Eliminado ✓");
       cargarEscenarios();
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (e) { console.error(e); }
+  };
+
+  const cerrarModal = () => {
+    setModal(false); setEditMode(false); setEditId(null);
+    setForm({ titulo:"", descripcion:"", pregunta:"", id_dimension:1, opcion1:"", opcion2:"" });
+    setImg1(null); setImg2(null);
   };
 
   const cerrarSesion = () => {
@@ -175,239 +249,189 @@ export default function PanelAdministrador() {
     window.location.reload();
   };
 
-  const renderTabla = () => {
-    // ── ESCENARIOS ──
-    if (seccionActiva === "escenarios") {
-      return (
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "center" }}>
-          <thead>
-            <tr style={{ backgroundColor: "#91C256", color: "#333" }}>
-              <th style={{ padding: "12px" }}>ID</th>
-              <th style={{ padding: "12px" }}>Título</th>
-              <th style={{ padding: "12px" }}>Dimensión</th>
-              <th style={{ padding: "12px" }}>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {escenarios.map((item) => (
-              <tr key={item.id} style={{ backgroundColor: "#FFFFFF", color: "#333" }}>
-                <td style={{ padding: "12px" }}>{item.id}</td>
-                <td style={{ padding: "12px" }}>{item.titulo}</td>
-                <td style={{ padding: "12px" }}>{item.dimension}</td>
-                <td style={{ padding: "12px" }}>
-                  <button onClick={() => editarEscenario(item)} style={actionBtn}>Editar</button>
-                  {" / "}
-                  <button onClick={() => eliminarEscenario(item.id)} style={actionBtn}>Eliminar</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      );
-    }
+  // Labeled usuarios
+  const usuariosLabeled = labelAnonimos(usuarios);
 
-    // ── USUARIOS ──
-    if (seccionActiva === "usuarios") {
-      return (
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "center" }}>
-          <thead>
-            <tr style={{ backgroundColor: "#91C256", color: "#333" }}>
-              <th style={{ padding: "12px" }}>Nombre</th>
-              <th style={{ padding: "12px" }}>Apellido</th>
-              <th style={{ padding: "12px" }}>Correo</th>
-              <th style={{ padding: "12px" }}>Municipio</th>
-              <th style={{ padding: "12px" }}>Institución</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map((item, index) => (
-              <tr key={index} style={{ backgroundColor: "#FFFFFF", color: "#333" }}>
-                <td style={{ padding: "12px" }}>{item.nombre}</td>
-                <td style={{ padding: "12px" }}>{item.apellido}</td>
-                <td style={{ padding: "12px" }}>{item.correo}</td>
-                <td style={{ padding: "12px" }}>{item.municipio || "—"}</td>
-                <td style={{ padding: "12px" }}>{item.nombre_institucion || "—"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      );
-    }
-
-    // ── RESPUESTAS ──
-    if (seccionActiva === "respuestas") {
-      return (
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "center" }}>
-          <thead>
-            <tr style={{ backgroundColor: "#91C256", color: "#333" }}>
-              <th style={{ padding: "12px" }}>Usuario</th>
-              <th style={{ padding: "12px" }}>Escenario</th>
-              <th style={{ padding: "12px" }}>Respuesta</th>
-            </tr>
-          </thead>
-          <tbody>
-            {respuestas.map((item, index) => (
-              <tr key={index} style={{ backgroundColor: "#FFFFFF", color: "#333" }}>
-                <td style={{ padding: "12px" }}>
-                  {item.correo === "anonimo@anonimo.com" ? "Anónimo" : item.correo}
-                </td>
-                <td style={{ padding: "12px" }}>{item.escenario}</td>
-                <td style={{ padding: "12px", textAlign: "left", maxWidth: "400px" }}>
-                  {item.respuesta}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      );
-    }
-
-    return null;
-  };
+  // ── Nav tabs ──
+  const tabs = ["escenarios", "usuarios", "respuestas"];
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#FFFFFF", fontFamily: "Instrument Sans, sans-serif" }}>
-      <header style={{
-        backgroundColor: "#007B3E",
-        padding: "16px 32px",
-        display: "flex",
-        justifyContent: "space-between",
-        color: "white",
-        flexWrap: "wrap",
-        alignItems: "center"
-      }}>
-        <img src={logo} alt="ISU Logo" style={{ height: "100px" }} />
+    <>
+      {/* Google Font */}
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');`}</style>
 
-        <nav style={{ display: "flex", gap: "50px" }}>
-          <button onClick={() => setSeccionActiva("escenarios")} style={{ ...btnStyle(seccionActiva, "escenarios"), fontSize: "20px" }}>Escenarios</button>
-          <button onClick={() => setSeccionActiva("usuarios")} style={{ ...btnStyle(seccionActiva, "usuarios"), fontSize: "20px" }}>Usuarios</button>
-          <button onClick={() => setSeccionActiva("respuestas")} style={{ ...btnStyle(seccionActiva, "respuestas"), fontSize: "20px" }}>Respuestas</button>
-        </nav>
+      <div style={{ minHeight:"100vh", background:"#f0f7f3", fontFamily: font }}>
 
-        <button onClick={cerrarSesion} style={{ background: "none", border: "none", color: "white" }}>
-          Cerrar sesión
-        </button>
-      </header>
-
-      <main style={{ padding: "30px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "25px" }}>
-          <h1 style={{ color: "#007B3E", fontSize: "40px", margin: 0 }}>
-            {seccionActiva.toUpperCase()}
-          </h1>
-
-          {seccionActiva === "escenarios" && (
-            <button
-              onClick={() => {
-                setModoEdicion(false);
-                setMostrarModal(true);
-                setNuevoEscenario({ titulo: "", descripcion: "", pregunta: "", id_dimension: 1, opcion1: "", opcion2: "" });
-                setImagen1(null);
-                setImagen2(null);
-              }}
-              style={{ background: "none", border: "none", color: "#2490A3", cursor: "pointer" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "32px" }}>Crear</span>
-                <img src={addIcon} alt="Crear" style={{ width: "40px" }} />
-              </div>
-            </button>
-          )}
-        </div>
-
-        {renderTabla()}
-      </main>
-
-      {mostrarModal && (
-        <div style={modalOverlay}>
-          <div style={modalBox}>
-            <h2>{modoEdicion ? "Editar escenario" : "Crear escenario"}</h2>
-
-            <input placeholder="Título" value={nuevoEscenario.titulo}
-              onChange={(e) => setNuevoEscenario({ ...nuevoEscenario, titulo: e.target.value })}
-              style={inputStyle}
-            />
-
-            <textarea placeholder="Descripción" value={nuevoEscenario.descripcion}
-              onChange={(e) => setNuevoEscenario({ ...nuevoEscenario, descripcion: e.target.value })}
-              style={inputStyle}
-            />
-
-            <textarea placeholder="Pregunta" value={nuevoEscenario.pregunta}
-              onChange={(e) => setNuevoEscenario({ ...nuevoEscenario, pregunta: e.target.value })}
-              style={inputStyle}
-            />
-
-            <select
-              value={nuevoEscenario.id_dimension}
-              onChange={(e) => setNuevoEscenario({ ...nuevoEscenario, id_dimension: Number(e.target.value) })}
-              style={inputStyle}
-            >
-              <option value={1}>Pedagógica</option>
-              <option value={5}>Autonomía Profesional</option>
-              <option value={3}>Ética</option>
-              <option value={4}>Equidad</option>
-            </select>
-
-            <input placeholder="Texto opción 1" value={nuevoEscenario.opcion1}
-              onChange={(e) => setNuevoEscenario({ ...nuevoEscenario, opcion1: e.target.value })}
-              style={inputStyle}
-            />
-            <input type="file" onChange={(e) => setImagen1(e.target.files[0])} />
-
-            <input placeholder="Texto opción 2" value={nuevoEscenario.opcion2}
-              onChange={(e) => setNuevoEscenario({ ...nuevoEscenario, opcion2: e.target.value })}
-              style={inputStyle}
-            />
-            <input type="file" onChange={(e) => setImagen2(e.target.files[0])} />
-
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "20px" }}>
-              <button onClick={() => setMostrarModal(false)}>Cancelar</button>
-              <button onClick={guardarEscenario}>Guardar</button>
-            </div>
+        {/* ── Header ── */}
+        <header style={{
+          background: C.green,
+          padding: "0 36px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          height: 68,
+          boxShadow: "0 2px 12px rgba(0,80,40,.18)",
+        }}>
+          {/* Logo text */}
+          <div style={{ color: C.white, fontWeight: 700, fontSize: 22, letterSpacing: 1 }}>
+            PRAXIS <span style={{ fontWeight: 400, opacity: .7, fontSize: 14 }}>Admin</span>
           </div>
-        </div>
+
+          {/* Tabs */}
+          <nav style={{ display:"flex", gap: 4 }}>
+            {tabs.map((t) => (
+              <button key={t} onClick={() => setSeccion(t)} style={{
+                background: seccion===t ? "rgba(255,255,255,.15)" : "none",
+                border: "none",
+                borderBottom: seccion===t ? `3px solid ${C.greenMid}` : "3px solid transparent",
+                color: C.white,
+                padding: "0 20px", height: 68,
+                fontFamily: font, fontWeight: 600, fontSize: 15,
+                cursor: "pointer", textTransform: "capitalize",
+                transition: "all .2s",
+              }}>{t}</button>
+            ))}
+          </nav>
+
+          <button onClick={cerrarSesion} style={{
+            background: "rgba(255,255,255,.1)",
+            border: "1px solid rgba(255,255,255,.25)",
+            color: C.white, borderRadius: 8,
+            padding: "8px 16px", cursor: "pointer",
+            fontFamily: font, fontSize: 13, fontWeight: 500,
+          }}>Cerrar sesión</button>
+        </header>
+
+        {/* ── Main ── */}
+        <main style={{ padding: "32px 36px" }}>
+
+          {/* Section header */}
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: 24 }}>
+            <h1 style={{ margin:0, color: C.text, fontSize: 28, fontWeight: 700, textTransform:"capitalize" }}>
+              {seccion}
+            </h1>
+            {seccion==="escenarios" && (
+              <button onClick={() => { setEditMode(false); setModal(true); }} style={btnPrimary}>
+                + Nuevo escenario
+              </button>
+            )}
+          </div>
+
+          {/* ── ESCENARIOS ── */}
+          {seccion==="escenarios" && (
+            <Table headers={["ID","Título","Dimensión","Acciones"]}>
+              {escenarios.length===0 ? <Empty text="Sin escenarios"/> :
+                escenarios.map((item, i) => (
+                  <TR key={item.id} alt={i%2===1}>
+                    <TD><Pill>{item.id}</Pill></TD>
+                    <TD>{item.titulo}</TD>
+                    <TD><Pill color={C.teal}>{item.dimension}</Pill></TD>
+                    <TD>
+                      <button onClick={() => editar(item)} style={{ ...btnOutline, padding:"5px 14px", fontSize:13, marginRight:8 }}>Editar</button>
+                      <button onClick={() => eliminar(item.id)} style={{ ...btnOutline, padding:"5px 14px", fontSize:13, color: C.danger, borderColor: C.danger }}>Eliminar</button>
+                    </TD>
+                  </TR>
+                ))
+              }
+            </Table>
+          )}
+
+          {/* ── USUARIOS ── */}
+          {seccion==="usuarios" && (
+            <Table headers={["Usuario","Correo","Municipio","Institución","Rol"]}>
+              {usuariosLabeled.length===0 ? <Empty text="Sin usuarios"/> :
+                usuariosLabeled.map((u, i) => (
+                  <TR key={i} alt={i%2===1}>
+                    <TD>
+                      <span style={{ fontWeight: u._isAnon ? 400 : 600 }}>
+                        {u._display}
+                      </span>
+                    </TD>
+                    <TD muted={u._isAnon}>{u._isAnon ? null : u.correo}</TD>
+                    <TD muted={u._isAnon}>{u._isAnon ? null : u.municipio}</TD>
+                    <TD muted={u._isAnon}>{u._isAnon ? null : u.nombre_institucion}</TD>
+                    <TD>
+                      <Pill color={u._isAnon ? C.muted : C.green}>
+                        {u._isAnon ? "Anónimo" : (u.nombre_rol || "Docente")}
+                      </Pill>
+                    </TD>
+                  </TR>
+                ))
+              }
+            </Table>
+          )}
+
+          {/* ── RESPUESTAS ── */}
+          {seccion==="respuestas" && (
+            <Table headers={["Usuario","Correo","Municipio","Institución","Escenario","Respuesta"]}>
+              {respuestas.length===0 ? <Empty text="Sin respuestas"/> :
+                respuestas.map((r, i) => {
+                  const anon = isAnon(r.correo);
+                  return (
+                    <TR key={i} alt={i%2===1}>
+                      <TD>
+                        {anon
+                          ? <Pill color={C.muted}>Anónimo</Pill>
+                          : <span style={{ fontWeight:600 }}>{r.correo}</span>
+                        }
+                      </TD>
+                      <TD muted>{anon ? null : r.correo}</TD>
+                      <TD muted>{anon ? null : r.municipio}</TD>
+                      <TD muted>{anon ? null : r.nombre_institucion}</TD>
+                      <TD>{r.escenario}</TD>
+                      <td style={{
+                        padding:"13px 16px", fontSize:13, color: C.text,
+                        maxWidth: 340, lineHeight:1.5,
+                      }}>{r.respuesta}</td>
+                    </TR>
+                  );
+                })
+              }
+            </Table>
+          )}
+
+        </main>
+      </div>
+
+      {/* ── Modal ── */}
+      {modal && (
+        <Modal
+          title={editMode ? "Editar escenario" : "Crear escenario"}
+          onClose={cerrarModal}
+          onSave={guardar}
+        >
+          {[
+            ["titulo","Título","input"],
+            ["descripcion","Descripción","textarea"],
+            ["pregunta","Pregunta","textarea"],
+          ].map(([key, placeholder, tag]) => (
+            tag==="textarea"
+              ? <textarea key={key} placeholder={placeholder} value={form[key]}
+                  onChange={(e)=>setForm({...form,[key]:e.target.value})}
+                  style={{...inputStyle, minHeight:80, resize:"vertical"}}/>
+              : <input key={key} placeholder={placeholder} value={form[key]}
+                  onChange={(e)=>setForm({...form,[key]:e.target.value})}
+                  style={inputStyle}/>
+          ))}
+
+          <select value={form.id_dimension}
+            onChange={(e)=>setForm({...form,id_dimension:Number(e.target.value)})}
+            style={inputStyle}>
+            <option value={1}>Pedagógica</option>
+            <option value={5}>Autonomía Profesional</option>
+            <option value={3}>Ética</option>
+            <option value={4}>Equidad</option>
+          </select>
+
+          {[["opcion1","Opción 1",setImg1],["opcion2","Opción 2",setImg2]].map(([key,label,setImg])=>(
+            <div key={key} style={{ marginBottom:14 }}>
+              <input placeholder={label} value={form[key]}
+                onChange={(e)=>setForm({...form,[key]:e.target.value})}
+                style={{...inputStyle, marginBottom:6}}/>
+              <input type="file" onChange={(e)=>setImg(e.target.files[0])}
+                style={{ fontSize:13, color: C.muted }}/>
+            </div>
+          ))}
+        </Modal>
       )}
-    </div>
+    </>
   );
 }
-
-function btnStyle(active, name) {
-  return {
-    background: "none",
-    border: "none",
-    color: "white",
-    cursor: "pointer",
-    textDecoration: active === name ? "underline" : "none"
-  };
-}
-
-const actionBtn = {
-  background: "none",
-  border: "none",
-  color: "#0E4B56",
-  cursor: "pointer",
-  fontWeight: "bold"
-};
-
-const inputStyle = {
-  width: "100%",
-  marginBottom: "12px",
-  padding: "12px",
-  borderRadius: "8px",
-  border: "1px solid #ccc"
-};
-
-const modalOverlay = {
-  position: "fixed",
-  inset: 0,
-  backgroundColor: "rgba(0,0,0,0.35)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center"
-};
-
-const modalBox = {
-  width: "500px",
-  backgroundColor: "white",
-  padding: "30px",
-  borderRadius: "12px"
-};

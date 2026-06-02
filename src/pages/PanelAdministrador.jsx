@@ -160,6 +160,8 @@ export default function PanelAdministrador() {
   const [usuarios, setUsuarios]     = useState([]);
   const [respuestas, setRespuestas] = useState([]);
 
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
+
   const [modal, setModal]           = useState(false);
   const [editMode, setEditMode]     = useState(false);
   const [editId, setEditId]         = useState(null);
@@ -360,33 +362,143 @@ export default function PanelAdministrador() {
           )}
 
           {/* ── RESPUESTAS ── */}
-          {seccion==="respuestas" && (
-            <Table headers={["Usuario","Correo","Municipio","Institución","Escenario","Respuesta"]}>
-              {respuestas.length===0 ? <Empty text="Sin respuestas"/> :
-                respuestas.map((r, i) => {
-                  const anon = isAnon(r.correo);
-                  return (
-                    <TR key={i} alt={i%2===1}>
-                      <TD>
-                        {anon
-                          ? <Pill color={C.muted}>Anónimo</Pill>
-                          : <span style={{ fontWeight:600 }}>{r.correo}</span>
-                        }
-                      </TD>
-                      <TD muted>{anon ? null : r.correo}</TD>
-                      <TD muted>{anon ? null : r.municipio}</TD>
-                      <TD muted>{anon ? null : r.nombre_institucion}</TD>
-                      <TD>{r.escenario}</TD>
-                      <td style={{
-                        padding:"13px 16px", fontSize:13, color: C.text,
-                        maxWidth: 340, lineHeight:1.5,
-                      }}>{r.respuesta}</td>
-                    </TR>
-                  );
-                })
+          {seccion==="respuestas" && (() => {
+            // Build unique users from respuestas
+            let anonCount = 0;
+            const seen = {};
+            const usuariosRespuestas = [];
+            respuestas.forEach((r) => {
+              const key = r.correo;
+              if (!seen[key]) {
+                seen[key] = true;
+                const anon = isAnon(r.correo);
+                usuariosRespuestas.push({
+                  correo: r.correo,
+                  _display: anon ? `Anónimo #${++anonCount}` : r.correo,
+                  _isAnon: anon,
+                  municipio: r.municipio,
+                  institucion: r.nombre_institucion,
+                });
               }
-            </Table>
-          )}
+            });
+
+            const respuestasFiltradas = usuarioSeleccionado
+              ? respuestas.filter((r) => r.correo === usuarioSeleccionado.correo)
+              : [];
+
+            return (
+              <div style={{ display:"flex", gap:24, alignItems:"flex-start" }}>
+
+                {/* Left: user list */}
+                <div style={{
+                  width: 260, flexShrink: 0,
+                  background: C.white, borderRadius:12,
+                  border:`1px solid ${C.border}`,
+                  overflow:"hidden",
+                }}>
+                  <div style={{
+                    background: C.green, color: C.white,
+                    padding:"12px 16px", fontWeight:700, fontSize:13,
+                    letterSpacing:".4px",
+                  }}>USUARIOS ({usuariosRespuestas.length})</div>
+
+                  <div style={{ maxHeight:520, overflowY:"auto" }}>
+                    {usuariosRespuestas.length===0
+                      ? <p style={{ padding:16, color:C.muted, fontSize:13 }}>Sin datos</p>
+                      : usuariosRespuestas.map((u, i) => {
+                          const active = usuarioSeleccionado?.correo === u.correo;
+                          const count  = respuestas.filter(r=>r.correo===u.correo).length;
+                          return (
+                            <div key={i} onClick={() => setUsuarioSeleccionado(active ? null : u)}
+                              style={{
+                                padding:"12px 16px",
+                                borderBottom:`1px solid ${C.border}`,
+                                cursor:"pointer",
+                                background: active ? C.greenLight : "none",
+                                borderLeft: active ? `4px solid ${C.green}` : "4px solid transparent",
+                                transition:"all .15s",
+                              }}>
+                              <div style={{ fontWeight:600, fontSize:13, color: active ? C.green : C.text }}>
+                                {u._display}
+                              </div>
+                              <div style={{ fontSize:12, color:C.muted, marginTop:2 }}>
+                                {count} respuesta{count!==1?"s":""}
+                              </div>
+                            </div>
+                          );
+                        })
+                    }
+                  </div>
+                </div>
+
+                {/* Right: respuestas del usuario seleccionado */}
+                <div style={{ flex:1 }}>
+                  {!usuarioSeleccionado ? (
+                    <div style={{
+                      background: C.white, borderRadius:12,
+                      border:`1px solid ${C.border}`,
+                      padding:"48px 32px", textAlign:"center",
+                      color:C.muted, fontSize:15,
+                    }}>
+                      ← Selecciona un usuario para ver sus respuestas
+                    </div>
+                  ) : (
+                    <>
+                      {/* User info card */}
+                      <div style={{
+                        background: C.white, borderRadius:12,
+                        border:`1px solid ${C.border}`,
+                        padding:"16px 20px", marginBottom:16,
+                        display:"flex", alignItems:"center", gap:16,
+                      }}>
+                        <div style={{
+                          width:42, height:42, borderRadius:"50%",
+                          background: usuarioSeleccionado._isAnon ? C.muted+"22" : C.green+"22",
+                          display:"flex", alignItems:"center", justifyContent:"center",
+                          fontSize:18,
+                        }}>
+                          {usuarioSeleccionado._isAnon ? "👤" : "🧑‍🏫"}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight:700, fontSize:15, color:C.text }}>
+                            {usuarioSeleccionado._display}
+                          </div>
+                          {!usuarioSeleccionado._isAnon && (
+                            <div style={{ fontSize:12, color:C.muted, marginTop:2 }}>
+                              {usuarioSeleccionado.municipio || "—"} · {usuarioSeleccionado.institucion || "—"}
+                            </div>
+                          )}
+                        </div>
+                        <Pill color={usuarioSeleccionado._isAnon ? C.muted : C.green}>
+                          {respuestasFiltradas.length} respuesta{respuestasFiltradas.length!==1?"s":""}
+                        </Pill>
+                      </div>
+
+                      {/* Respuestas cards */}
+                      <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+                        {respuestasFiltradas.map((r, i) => (
+                          <div key={i} style={{
+                            background: C.white, borderRadius:12,
+                            border:`1px solid ${C.border}`,
+                            padding:"16px 20px",
+                          }}>
+                            <div style={{
+                              fontSize:12, fontWeight:700, color:C.teal,
+                              textTransform:"uppercase", letterSpacing:".5px", marginBottom:8,
+                            }}>{r.escenario}</div>
+                            <div style={{ fontSize:14, color:C.text, lineHeight:1.6 }}>
+                              {r.respuesta}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+              </div>
+            );
+          })()}
 
         </main>
       </div>
